@@ -22,7 +22,10 @@
         }
     },
     "host_permissions": [
-        "https://store.steampowered.com/*"
+        "https://store.steampowered.com/*",
+        "https://raw.githubusercontent.com/*",
+        "https://github.com/*",
+        "https://api.gg.deals/*"
     ],
     "background": {
         "service_worker": "scripts/background.js"

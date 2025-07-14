@@ -105,7 +105,7 @@ async function getAppIds() {
     for (let i = 0; i < Math.ceil(appIdsArray.length / 100); i++)
     {
         const chunk = appIdsArray.slice(i * 100, (i + 1) * 100);
-        const apps = await fetchURL(`http://api.gg.deals/v1/prices/by-steam-app-id/?ids=${chunk.toString()}&key=${token}&region=${await getFromStorage("region", "us")}`);
+        const apps = await fetchURL(`https://api.gg.deals/v1/prices/by-steam-app-id/?ids=${chunk.toString()}&key=${token}&region=${await getFromStorage("region", "us")}`);
         data = {...data, ...JSON.parse(apps)?.data};
     }
     await setToStorage("lastAppIds", {...lastAppIds, ...data});
