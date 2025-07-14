@@ -123,11 +123,14 @@ async function GetVersion() {
 }
 
 async function createSettingsButton() {
+    if(document.querySelector("#ggdeals_settings_btn")) return;
     const button = document.createElement("a");
     button.href = chrome.runtime.getURL("popup.html");
     button.id = "ggdeals_settings_btn";
     button.target = "_blank";
-    if (document.getElementById("header_notification_area"))
+    if (document.querySelector('a.global_action_link[href*="https://store.steampowered.com/login/"]'))
+        document.querySelector('a.global_action_link[href*="https://store.steampowered.com/login/"]').before(button);
+    else if (document.getElementById("header_notification_area"))
         document.getElementById("header_notification_area").before(button);
     else
         document.getElementById("green_envelope_menu_root").parentNode.parentNode.before(button);
@@ -159,7 +162,7 @@ async function updateColors() {
     document.documentElement.style.setProperty("--priceBgColor", colors[2] || "#344654");
 }
 
-waitForElm('#green_envelope_menu_root').then(async() => {
+waitForElm('#global_header').then(async() => {
     createSettingsButton();
     updateColors();
 });
