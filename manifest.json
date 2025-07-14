@@ -22,7 +22,7 @@
         }
     },
     "host_permissions": [
-        "*://*/*"
+        "https://store.steampowered.com/*"
     ],
     "background": {
         "service_worker": "scripts/background.js"
