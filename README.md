@@ -3,10 +3,10 @@
 </div>
 
 <div align="center">
-  <a href="https://GitHub.com/Juzlus/GG.deals-on-Steam/releases/"><img alt="GitHub release" src="https://img.shields.io/github/release/Juzlus/GG.deals-on-Steam.svg?style=social"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <a href="https://GitHub.com/Juzlus/GG.deals-on-Steam/commit/"><img alt="GitHub latest commit" src="https://img.shields.io/github/last-commit/Juzlus/GG.deals-on-Steam.svg?style=social&logo=github"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <a href="https://GitHub.com/JuzlusGG.deals-on-Steam/releases/"><img alt="Github all releases" src="https://img.shields.io/github/downloads/Juzlus/GG.deals-on-Steam/total.svg?style=social"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <a href="https://GitHub.com/Juzlus/GG.deals-on-Steam/stargazers/"><img alt="GitHub stars" src="https://img.shields.io/github/stars/Juzlus/GG.deals-on-Steam.svg?style=social"></a>
+  <a href="https://github.com/jafin/GG.deals-on-Steam/releases/"><img alt="GitHub release" src="https://img.shields.io/github/release/jafin/GG.deals-on-Steam.svg?style=social"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="https://github.com/jafin/GG.deals-on-Steam/commits/"><img alt="GitHub latest commit" src="https://img.shields.io/github/last-commit/jafin/GG.deals-on-Steam.svg?style=social&logo=github"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="https://github.com/jafin/GG.deals-on-Steam/releases/"><img alt="Github all releases" src="https://img.shields.io/github/downloads/jafin/GG.deals-on-Steam/total.svg?style=social"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="https://github.com/jafin/GG.deals-on-Steam/stargazers/"><img alt="GitHub stars" src="https://img.shields.io/github/stars/jafin/GG.deals-on-Steam.svg?style=social"></a>
 </div>
 
 
@@ -33,7 +33,7 @@
     - [Tampermonkey](https://www.tampermonkey.net/) (Chrome, Edge, Firefox, Opera, Safari)
     - [Greasemonkey](https://www.greasespot.net/) (Firefox)
     - [Violentmonkey](https://violentmonkey.github.io/) (Chrome, Edge, Firefox, Opera)
-2. Install the userscript from the [latest release](https://github.com/Juzlus/GG.deals-on-Steam/releases/latest) - click the `.user.js` file and your userscript manager will prompt you to install it
+2. Install the userscript from the [latest release](https://github.com/jafin/GG.deals-on-Steam/releases/latest) - click the `.user.js` file and your userscript manager will prompt you to install it
 3. Visit any [Steam store](https://store.steampowered.com) page
 4. Click the GG.deals settings button in the Steam header to open settings
 5. Enter your API key from [gg.deals/api](https://gg.deals/api/)
@@ -46,6 +46,21 @@
 ![Prieview 3](https://github.com/Juzlus/GG.deals-on-Steam/blob/server/icons/preview_3.png?raw=true)
 ![Prieview 4](https://github.com/Juzlus/GG.deals-on-Steam/blob/server/icons/preview_4.png?raw=true)
 ![Prieview 5](https://github.com/Juzlus/GG.deals-on-Steam/blob/server/icons/preview_5.png?raw=true)
+
+## 🔧 Changes from upstream
+
+This fork converts the original Chrome/Firefox extension into a userscript and modernises the codebase:
+
+- **Converted to userscript** -- no longer requires installing a browser extension; works with Tampermonkey, Greasemonkey, or Violentmonkey
+- **Rewritten in TypeScript + Preact** -- built with Vite and [vite-plugin-monkey](https://github.com/nickyam/vite-plugin-monkey), with Preact loaded from CDN
+- **Parallel API fetches** -- chunked requests run concurrently via `Promise.all` instead of sequentially
+- **1-hour cache staleness** -- cached prices are automatically refreshed after 1 hour, replacing the old rate-limit-based heuristic
+- **Price diff display** -- app page now shows the difference between current and historical lowest prices
+- **Dual-price search results** -- search page shows both official and keyshop prices side by side
+- **Settings panel built in Preact** -- uses `@preact/signals` for reactive state; settings panel is injected directly into the Steam page
+- **XSS and security fixes** -- sanitised DOM injection, added `rel="noopener"` to external links
+- **CI pipeline** -- GitHub Actions builds the userscript on every push, with git-tag-based versioning (`v1.0.0` for releases, `1.0.0-beta.N` for dev builds)
+
 
 ## 🙏 Credits
 
