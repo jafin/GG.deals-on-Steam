@@ -1,3 +1,4 @@
+import { STORAGE_KEYS, DEFAULT_PRICE_TYPE } from './constants';
 import { getFromStorage } from './storage';
 import type { AppData, AppMap, PriceType } from './types';
 
@@ -22,7 +23,7 @@ export function getLowestPrice(
   keyshopPrice: string | null,
   currency: string
 ): string {
-  const priceType = getFromStorage<PriceType[]>('priceType', ['official', 'keyshop']);
+  const priceType = getFromStorage<PriceType[]>(STORAGE_KEYS.priceType, DEFAULT_PRICE_TYPE);
 
   let price: string | null;
   if (priceType.length === 2) {

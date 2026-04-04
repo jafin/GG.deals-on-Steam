@@ -1,4 +1,5 @@
 import { getAppIds } from '../api';
+import { STORAGE_KEYS, DEFAULT_SUBPAGES } from '../constants';
 import { getFromStorage } from '../storage';
 import type { AppMap, Subpage } from '../types';
 import { checkPrice } from '../utils';
@@ -48,9 +49,7 @@ async function refreshPrices() {
 }
 
 export async function initSearch() {
-  const activeSubpages = getFromStorage<Subpage[]>('activeSubpages', [
-    'app', 'wishlist', 'bundle', 'cart', 'search', 'recommended',
-  ]);
+  const activeSubpages = getFromStorage<Subpage[]>(STORAGE_KEYS.activeSubpages, DEFAULT_SUBPAGES);
   if (!activeSubpages.includes('search')) return;
 
   const parent = document.querySelector('#search_results');

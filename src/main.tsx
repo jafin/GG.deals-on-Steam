@@ -1,4 +1,5 @@
 import { render } from 'preact';
+import { STORAGE_KEYS, DEFAULT_COLORS } from './constants';
 import { injectStyles } from './styles';
 import { getFromStorage, setToStorage } from './storage';
 import { waitForElm } from './utils';
@@ -11,10 +12,10 @@ import { initSearch } from './pages/search';
 import { initWishlist } from './pages/wishlist';
 
 function updateColors() {
-  const colors = getFromStorage('colors', ['#BEEE11', '#a6cc1b', '#344654']);
-  document.documentElement.style.setProperty('--priceColor', colors[0] || '#BEEE11');
-  document.documentElement.style.setProperty('--hoverPriceColor', colors[1] || '#a6cc1b');
-  document.documentElement.style.setProperty('--priceBgColor', colors[2] || '#344654');
+  const colors = getFromStorage(STORAGE_KEYS.colors, DEFAULT_COLORS);
+  document.documentElement.style.setProperty('--priceColor', colors[0] || DEFAULT_COLORS[0]);
+  document.documentElement.style.setProperty('--hoverPriceColor', colors[1] || DEFAULT_COLORS[1]);
+  document.documentElement.style.setProperty('--priceBgColor', colors[2] || DEFAULT_COLORS[2]);
 }
 
 function createSettingsButton() {
@@ -38,7 +39,7 @@ function createSettingsButton() {
     }
   }
 
-  if (getFromStorage<string | null>('token', null) == null) {
+  if (getFromStorage<string | null>(STORAGE_KEYS.token, null) == null) {
     document.documentElement.style.setProperty('--settingAlertBg', 'red');
     return;
   }
@@ -53,7 +54,7 @@ function createSettingsButton() {
         const data = JSON.parse(response.responseText);
         const latestVersion = data?.version_userscript ?? data?.version_chromium;
         if (latestVersion) {
-          setToStorage('latestVersion', latestVersion);
+          setToStorage(STORAGE_KEYS.latestVersion, latestVersion);
           const currentVersion = '1.0.0';
           if (latestVersion !== currentVersion) {
             document.documentElement.style.setProperty('--settingAlertBg', 'orange');

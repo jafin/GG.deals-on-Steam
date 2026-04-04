@@ -1,4 +1,5 @@
 import { signal, computed } from '@preact/signals';
+import { STORAGE_KEYS, DEFAULT_SUBPAGES, DEFAULT_PRICE_TYPE, DEFAULT_COLORS, DEFAULT_REGION } from '../constants';
 import { getFromStorage, setToStorage, removeFromStorage } from '../storage';
 import type { PriceType, Subpage } from '../types';
 
@@ -47,16 +48,16 @@ const PRICE_TYPES: { value: PriceType; label: string; desc: string }[] = [
 ];
 
 const visible = signal(false);
-const apiKey = signal(getFromStorage('token', ''));
+const apiKey = signal(getFromStorage(STORAGE_KEYS.token, ''));
 const showApiKey = signal(false);
-const region = signal(getFromStorage('region', 'us'));
-const activeSubpages = signal(getFromStorage<Subpage[]>('activeSubpages', ['app', 'wishlist', 'bundle', 'cart', 'search', 'recommended']));
-const priceType = signal(getFromStorage<PriceType[]>('priceType', ['official', 'keyshop']));
-const colors = signal(getFromStorage<string[]>('colors', ['#BEEE11', '#a6cc1b', '#344654']));
-const priceInStorage = signal(Object.keys(getFromStorage('lastAppIds', {})).length);
-const rateLimitLimit = signal(getFromStorage('x-ratelimit-limit', '100'));
-const rateLimitRemaining = signal(getFromStorage('x-ratelimit-remaining', '0'));
-const rateLimitReset = signal(getFromStorage('x-ratelimit-reset', '0'));
+const region = signal(getFromStorage(STORAGE_KEYS.region, DEFAULT_REGION));
+const activeSubpages = signal(getFromStorage<Subpage[]>(STORAGE_KEYS.activeSubpages, DEFAULT_SUBPAGES));
+const priceType = signal(getFromStorage<PriceType[]>(STORAGE_KEYS.priceType, DEFAULT_PRICE_TYPE));
+const colors = signal(getFromStorage<string[]>(STORAGE_KEYS.colors, DEFAULT_COLORS));
+const priceInStorage = signal(Object.keys(getFromStorage(STORAGE_KEYS.lastAppIds, {})).length);
+const rateLimitLimit = signal(getFromStorage(STORAGE_KEYS.rateLimitLimit, '100'));
+const rateLimitRemaining = signal(getFromStorage(STORAGE_KEYS.rateLimitRemaining, '0'));
+const rateLimitReset = signal(getFromStorage(STORAGE_KEYS.rateLimitReset, '0'));
 
 const resetTimeDisplay = computed(() => new Date(Number(rateLimitReset.value) * 1000).toLocaleString());
 
@@ -64,21 +65,21 @@ export function toggleSettingsPanel() {
   visible.value = !visible.value;
   if (visible.value) {
     // Refresh values when opening
-    priceInStorage.value = Object.keys(getFromStorage('lastAppIds', {})).length;
-    rateLimitLimit.value = getFromStorage('x-ratelimit-limit', '100');
-    rateLimitRemaining.value = getFromStorage('x-ratelimit-remaining', '0');
-    rateLimitReset.value = getFromStorage('x-ratelimit-reset', '0');
+    priceInStorage.value = Object.keys(getFromStorage(STORAGE_KEYS.lastAppIds, {})).length;
+    rateLimitLimit.value = getFromStorage(STORAGE_KEYS.rateLimitLimit, '100');
+    rateLimitRemaining.value = getFromStorage(STORAGE_KEYS.rateLimitRemaining, '0');
+    rateLimitReset.value = getFromStorage(STORAGE_KEYS.rateLimitReset, '0');
   }
 }
 
 function onApiKeyChange(val: string) {
   apiKey.value = val;
-  setToStorage('token', val);
+  setToStorage(STORAGE_KEYS.token, val);
 }
 
 function onRegionChange(val: string) {
   region.value = val;
-  setToStorage('region', val);
+  setToStorage(STORAGE_KEYS.region, val);
 }
 
 function onSubpageToggle(sub: Subpage) {
@@ -87,7 +88,7 @@ function onSubpageToggle(sub: Subpage) {
   if (idx >= 0) curr.splice(idx, 1);
   else curr.push(sub);
   activeSubpages.value = curr;
-  setToStorage('activeSubpages', curr);
+  setToStorage(STORAGE_KEYS.activeSubpages, curr);
 }
 
 function onPriceTypeToggle(pt: PriceType) {
@@ -96,32 +97,31 @@ function onPriceTypeToggle(pt: PriceType) {
   if (idx >= 0) curr.splice(idx, 1);
   else curr.push(pt);
   priceType.value = curr;
-  setToStorage('priceType', curr);
+  setToStorage(STORAGE_KEYS.priceType, curr);
 }
 
 function onColorChange(index: number, val: string) {
   const curr = [...colors.value];
   curr[index] = val;
   colors.value = curr;
-  setToStorage('colors', curr);
+  setToStorage(STORAGE_KEYS.colors, curr);
   applyColors(curr);
 }
 
 function resetColors() {
-  const defaults = ['#BEEE11', '#a6cc1b', '#344654'];
-  colors.value = defaults;
-  setToStorage('colors', defaults);
+  colors.value = [...DEFAULT_COLORS];
+  setToStorage(STORAGE_KEYS.colors, DEFAULT_COLORS);
   applyColors(defaults);
 }
 
 function applyColors(c: string[]) {
-  document.documentElement.style.setProperty('--priceColor', c[0] || '#BEEE11');
-  document.documentElement.style.setProperty('--hoverPriceColor', c[1] || '#a6cc1b');
-  document.documentElement.style.setProperty('--priceBgColor', c[2] || '#344654');
+  document.documentElement.style.setProperty('--priceColor', c[0] || DEFAULT_COLORS[0]);
+  document.documentElement.style.setProperty('--hoverPriceColor', c[1] || DEFAULT_COLORS[1]);
+  document.documentElement.style.setProperty('--priceBgColor', c[2] || DEFAULT_COLORS[2]);
 }
 
 function clearStorage() {
-  removeFromStorage('lastAppIds');
+  removeFromStorage(STORAGE_KEYS.lastAppIds);
   priceInStorage.value = 0;
 }
 

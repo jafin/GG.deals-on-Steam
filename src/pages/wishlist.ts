@@ -1,4 +1,5 @@
 import { getAppIds } from '../api';
+import { STORAGE_KEYS, DEFAULT_SUBPAGES } from '../constants';
 import { getFromStorage } from '../storage';
 import type { AppMap, Subpage } from '../types';
 import { waitForElm, checkPrice } from '../utils';
@@ -42,9 +43,7 @@ async function refreshPrices() {
 export async function initWishlist() {
   await waitForElm('section > div:last-of-type > div:last-of-type div div');
 
-  const activeSubpages = getFromStorage<Subpage[]>('activeSubpages', [
-    'app', 'wishlist', 'bundle', 'cart', 'search', 'recommended',
-  ]);
+  const activeSubpages = getFromStorage<Subpage[]>(STORAGE_KEYS.activeSubpages, DEFAULT_SUBPAGES);
   if (!activeSubpages.includes('wishlist')) return;
 
   refreshPrices();
