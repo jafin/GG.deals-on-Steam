@@ -71,8 +71,8 @@ async function init() {
     document.getElementById("clearStorage").onclick = clearPrices;
 
     document.getElementById("version").innerText = await getFromStorage("version", 0);
-    if (await getFromStorage("version", 0) != await getFromStorage("latestVersion", 0))
-        document.getElementById("newVersion").style.display = "inline";
+    // if (await getFromStorage("version", 0) != await getFromStorage("latestVersion", 0))
+    //     document.getElementById("newVersion").style.display = "inline";
 
     const activeSubpages = await getFromStorage("activeSubpages", ["app", "wishlist", "bundle", "cart", "search", "recommended"]);
     document.querySelectorAll("input[name='activeSubpages']").forEach(e => {

@@ -54,7 +54,7 @@ export async function getAppIds(): Promise<AppMap | null> {
   const appIds = new Set<string>();
 
   document.querySelectorAll<HTMLAnchorElement>('[href*="store.steampowered.com/app/"]').forEach((e) => {
-    const id = e.href.match(/\/(app)\/(\d+)/)?.[2];
+    const id = new RegExp(/\/(app)\/(\d+)/).exec(e.href)?.[2];
     if (id && !(id in lastAppIds) && !e.classList.contains('ggdeals_used_price')) {
       appIds.add(id);
     }

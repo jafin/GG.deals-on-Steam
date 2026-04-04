@@ -6,7 +6,7 @@ const CONTENT_CSS = `
     --settingAlertBg: #00000000;
 }
 
-.ggdeals_dlc_price, .ggdeals_search_price, .ggdeals_bundle_price {
+.ggdeals_dlc_price, .ggdeals_bundle_price {
     line-height: 12px;
     font-size: 11px;
     padding: 1px 3px;
@@ -17,11 +17,11 @@ const CONTENT_CSS = `
     right: 9px;
 }
 
-.ggdeals_dlc_price:hover, .ggdeals_search_price:hover, .ggdeals_bundle_price:hover, .ggdeals_similar_game_price:hover, .ggdeals_lowest .ggdeals_price, .ggdeals_other_cart_price:hover, .ggdeals_recommended_price:hover, .ggdeals_main_recommended_price:hover, .ggdeals_wishlist_price:hover, .ggdeals_main_cart_price:hover {
+.ggdeals_dlc_price:hover, .ggdeals_bundle_price:hover, .ggdeals_similar_game_price:hover, .ggdeals_lowest .ggdeals_price, .ggdeals_other_cart_price:hover, .ggdeals_recommended_price:hover, .ggdeals_main_recommended_price:hover, .ggdeals_wishlist_price:hover, .ggdeals_main_cart_price:hover {
     color: var(--hoverPriceColor);
 }
 
-.ggdeals_dlc_price::before, .ggdeals_bundle_price::before, .ggdeals_search_price::before, .ggdeals_other_cart_price::before, .ggdeals_main_recommended_price::before, .ggdeals_recommended_price::before, .ggdeals_similar_game_price::before, .ggdeals_wishlist_price::before, .ggdeals_main_cart_price::before {
+.ggdeals_dlc_price::before, .ggdeals_bundle_price::before, .ggdeals_other_cart_price::before, .ggdeals_main_recommended_price::before, .ggdeals_recommended_price::before, .ggdeals_similar_game_price::before, .ggdeals_wishlist_price::before, .ggdeals_main_cart_price::before {
     content: "";
     left: 2px;
     position: absolute;
@@ -171,7 +171,7 @@ const CONTENT_CSS = `
 
 #ggdeals_settings_btn::before {
     content: "";
-    background-image: url(https://github.com/Juzlus/GG.deals-on-Steam/blob/server/icons/ggdeals_logo_white.png?raw=true);
+    background-image: url(https://raw.githubusercontent.com/Juzlus/GG.deals-on-Steam/refs/heads/server/icons/ggdeals_logo_white.png);
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
@@ -208,8 +208,62 @@ const CONTENT_CSS = `
     top: 13px;
 }
 
-.ggdeals_search_price {
-    right: -95px;
+.ggdeals_search_prices {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: flex-end;
+    gap: 4px;
+    padding: 2px 0;
+}
+
+.ggdeals_search_price_official,
+.ggdeals_search_price_keyshop {
+    line-height: 12px;
+    font-size: 11px;
+    padding: 1px 3px 1px 17px;
+    color: var(--priceColor);
+    background-color: var(--priceBgColor);
+    white-space: nowrap;
+    position: relative;
+    display: block;
+    text-decoration: none;
+}
+
+.ggdeals_search_price_official:hover,
+.ggdeals_search_price_keyshop:hover {
+    color: var(--hoverPriceColor);
+}
+
+.ggdeals_search_price_official::before,
+.ggdeals_search_price_keyshop::before {
+    content: "";
+    left: 2px;
+    position: absolute;
+    width: 11px;
+    height: 11px;
+    background-image: url(https://github.com/Juzlus/GG.deals-on-Steam/blob/server/icons/ggdeals-16x16.png?raw=true);
+    background-size: contain;
+    background-repeat: no-repeat;
+    border-radius: 20%;
+}
+
+.ggdeals_search_price_official::after {
+    content: "official";
+    font-size: 8px;
+    opacity: 0.6;
+    margin-left: 3px;
+}
+
+.ggdeals_search_price_keyshop::after {
+    content: "key";
+    font-size: 8px;
+    opacity: 0.6;
+    margin-left: 3px;
+}
+
+.ggdeals_search_prices--single .ggdeals_search_price_official::after,
+.ggdeals_search_prices--single .ggdeals_search_price_keyshop::after {
+    display: none;
 }
 
 .search_result_row .col.search_name {

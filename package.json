@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build"
   },
-  "author": "Juzlus",
+  "author": "Jafin,Juzlus",
   "license": "ISC",
   "packageManager": "pnpm@10.18.2",
   "pnpm": {

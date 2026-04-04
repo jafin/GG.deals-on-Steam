@@ -80,7 +80,7 @@ function detectPageAndInit() {
     initCart();
   } else if (href.includes('/recommended/morelike/')) {
     initRecommended();
-  } else if (href.includes('/search/')) {
+  } else if (href.includes('/search')) {
     initSearch();
   } else if (href.includes('/wishlist/')) {
     initWishlist();

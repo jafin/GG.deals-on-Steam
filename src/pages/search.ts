@@ -1,30 +1,59 @@
 import { getAppIds } from '../api';
-import { STORAGE_KEYS, DEFAULT_SUBPAGES } from '../constants';
+import { STORAGE_KEYS, DEFAULT_SUBPAGES, DEFAULT_PRICE_TYPE } from '../constants';
 import { getFromStorage } from '../storage';
-import type { AppMap } from '../types';
-import { checkPrice } from '../utils';
+import type { AppMap, PriceType } from '../types';
 
 function setSearchGamePrice(apps: AppMap) {
+  const priceType = getFromStorage<PriceType[]>(STORAGE_KEYS.priceType, DEFAULT_PRICE_TYPE);
+  const showOfficial = priceType.includes('official');
+  const showKeyshop = priceType.includes('keyshop');
+
   for (const e of document.querySelectorAll<HTMLAnchorElement>('a[data-ds-appid]')) {
-    if (e.querySelector('.ggdeals_search_price')) continue;
+    if (e.querySelector('.ggdeals_search_prices')) continue;
 
     e.classList.add('ggdeals_used_price');
-    const priceText = e.querySelector('.discount_final_price');
-    if (!priceText) continue;
+    const nameBlock = e.querySelector('.responsive_search_name_combined');
+    if (!nameBlock) continue;
 
     const id = e.href?.match(/\/(app)\/(\d+)/)?.[2];
     if (!id) continue;
     const app = apps[id];
+    if (!app?.prices) continue;
 
-    const price = checkPrice(app);
-    if (!price) continue;
+    const { currentRetail, currentKeyshops, currency } = app.prices;
+    const url = app.url || '#';
 
-    const priceBlock = document.createElement('a');
-    priceBlock.href = app?.url || '#';
-    priceBlock.classList.add('ggdeals_search_price');
-    priceBlock.innerText = price;
+    // Skip free-to-play games
+    if (currentRetail === '0.00' && !currentKeyshops) continue;
 
-    e.querySelector('.discount_final_price')?.before(priceBlock);
+    const container = document.createElement('div');
+    container.classList.add('ggdeals_search_prices');
+
+    if (showOfficial && currentRetail && currentRetail !== '0.00') {
+      const link = document.createElement('a');
+      link.href = url;
+      link.classList.add('ggdeals_search_price_official');
+      link.textContent = `${currentRetail} ${currency}`;
+      link.title = 'Official shops \u2014 GG.deals';
+      container.appendChild(link);
+    }
+
+    if (showKeyshop && currentKeyshops) {
+      const link = document.createElement('a');
+      link.href = url;
+      link.classList.add('ggdeals_search_price_keyshop');
+      link.textContent = `${currentKeyshops} ${currency}`;
+      link.title = 'Keyshops \u2014 GG.deals';
+      container.appendChild(link);
+    }
+
+    if (container.children.length === 0) continue;
+
+    if (container.children.length === 1) {
+      container.classList.add('ggdeals_search_prices--single');
+    }
+
+    nameBlock.appendChild(container);
   }
 }
 
@@ -49,6 +78,7 @@ async function refreshPrices() {
 }
 
 export async function initSearch() {
+  console.debug('[GG.deals on Steam] Initializing search page');
   const activeSubpages = getFromStorage(STORAGE_KEYS.activeSubpages, DEFAULT_SUBPAGES);
   if (!activeSubpages.includes('search')) return;
 

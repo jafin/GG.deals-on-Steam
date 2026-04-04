@@ -22,7 +22,7 @@ export default defineConfig({
         version,
         description: 'Displays the current lowest prices from GG.deals directly on Steam store pages.',
         author: 'Juzlus',
-        icon: 'https://github.com/Juzlus/GG.deals-on-Steam/blob/server/icons/ggdeals_logo_white.png?raw=true',
+        icon: 'https://raw.githubusercontent.com/Juzlus/GG.deals-on-Steam/refs/heads/server/icons/ggdeals_logo_white.png',
         match: [
           'https://store.steampowered.com/*',
         ],

@@ -54,7 +54,7 @@ function setPriceHistory(apps) {
     const historyBlock = document.createElement("a");
     historyBlock.href = app?.url || "#";
     historyBlock.classList.add("ggdeals_price_history");
-    historyBlock.innerHTML = (`<img src="https://github.com/Juzlus/GG.deals-on-Steam/blob/server/icons/ggdeals_logo_white.png?raw=true"></img><div>`
+    historyBlock.innerHTML = (`<img src="https://raw.githubusercontent.com/Juzlus/GG.deals-on-Steam/refs/heads/server/icons/ggdeals_logo_white.png"></img><div>`
                             + `<p class="ggdeals_current">Current price is <b class="ggdeals_price">${app?.prices?.currentRetail} ${app?.prices?.currency}</b> at Official shops`
                             + (app?.prices?.currentKeyshops ? ` and <b class="ggdeals_price">${app?.prices?.currentKeyshops} ${app?.prices?.currency}</b> at Keyshops` : '')
                             + `</p>`
