@@ -55,8 +55,7 @@ function createSettingsButton() {
         const latestVersion = data?.version_userscript ?? data?.version_chromium;
         if (latestVersion) {
           setToStorage(STORAGE_KEYS.latestVersion, latestVersion);
-          const currentVersion = '1.0.0';
-          if (latestVersion !== currentVersion) {
+          if (latestVersion !== __APP_VERSION__) {
             document.documentElement.style.setProperty('--settingAlertBg', 'orange');
           }
         }

@@ -1,7 +1,11 @@
 import { defineConfig } from 'vite';
 import monkey from 'vite-plugin-monkey';
+import { version } from './package.json';
 
 export default defineConfig({
+  define: {
+    __APP_VERSION__: JSON.stringify(version),
+  },
   esbuild: {
     jsx: 'automatic',
     jsxImportSource: 'preact',
@@ -15,7 +19,7 @@ export default defineConfig({
       userscript: {
         name: 'GG.deals on Steam',
         namespace: 'ggdeals-on-steam',
-        version: '1.0.0',
+        version,
         description: 'Displays the current lowest prices from GG.deals directly on Steam store pages.',
         author: 'Juzlus',
         icon: 'https://github.com/Juzlus/GG.deals-on-Steam/blob/server/icons/ggdeals_logo_white.png?raw=true',
