@@ -16,7 +16,7 @@ export function SettingsButton() {
 
     GM_xmlhttpRequest({
       method: 'GET',
-      url: 'https://raw.githubusercontent.com/Juzlus/GG.deals-on-Steam/refs/heads/server/versions.json',
+      url: 'https://raw.githubusercontent.com/jafin/GG.deals-on-Steam/refs/heads/server/versions.json',
       onload(response) {
         if (response.status !== 200) return;
         try {

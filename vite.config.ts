@@ -23,8 +23,8 @@ export default defineConfig({
         namespace: 'ggdeals-on-steam',
         version,
         description: 'Displays the current lowest prices from GG.deals directly on Steam store pages.',
-        author: 'Juzlus',
-        icon: 'https://raw.githubusercontent.com/Juzlus/GG.deals-on-Steam/refs/heads/server/icons/ggdeals_logo_white.png',
+        author: 'jafin (Jizlus)',
+        icon: 'https://raw.githubusercontent.com/jafin/GG.deals-on-Steam/refs/heads/server/icons/ggdeals_logo_white.png',
         match: [
           'https://store.steampowered.com/*',
         ],
