@@ -1,16 +1,7 @@
 import { getAppIds } from '../api';
 import { getFromStorage } from '../storage';
 import type { AppMap, Subpage } from '../types';
-import { waitForElm, getLowestPrice } from '../utils';
-
-async function checkSimilarGame() {
-  const morelike = document.querySelectorAll('[class*="buttonNext"]');
-  for (let i = 0; i < 8; i++) {
-    await new Promise((resolve) => setTimeout(resolve, i * 10));
-    if (morelike.length > 0) (morelike[0] as HTMLElement).click();
-    if (morelike.length > 2) (morelike[2] as HTMLElement).click();
-  }
-}
+import { waitForElm, getLowestPrice, clickCarouselButtons, setSimilarGamePrice } from '../utils';
 
 function setDLCPrice(apps: AppMap) {
   document.querySelectorAll<HTMLAnchorElement>('.game_area_dlc_row').forEach(async (e) => {
@@ -29,35 +20,6 @@ function setDLCPrice(apps: AppMap) {
       app?.prices?.currency ?? ''
     );
     e.prepend(priceBlock);
-  });
-}
-
-function setSimilarGamePrice(apps: AppMap) {
-  document.querySelectorAll('.ImpressionTrackedElement').forEach(async (e) => {
-    const id = e.querySelector<HTMLAnchorElement>('a[href*="store.steampowered.com/app/"]')?.href?.match(
-      /\/(app)\/(\d+)/
-    )?.[2];
-    if (!id) return;
-    const freeLabel = e.querySelector<HTMLElement>('.StoreSalePriceWidgetContainer div');
-    if (freeLabel?.innerText === 'Free to Play') return;
-    const app = apps[id];
-
-    const price = getLowestPrice(
-      app?.prices?.currentRetail ?? null,
-      app?.prices?.currentKeyshops ?? null,
-      app?.prices?.currency ?? ''
-    );
-    if (price === 'N/A') return;
-
-    const priceBlock = document.createElement('a');
-    priceBlock.href = app?.url || '#';
-    priceBlock.classList.add('ggdeals_similar_game_price');
-    priceBlock.innerText = price;
-    const bar = e.querySelector<HTMLElement>('.CapsuleBottomBar');
-    if (bar) priceBlock.style.opacity = window.getComputedStyle(bar).opacity;
-
-    e.prepend(priceBlock);
-    e.querySelector('._2_KY_e11FV0ftXR2_7TMmP')?.remove();
   });
 }
 
@@ -128,10 +90,10 @@ export async function initApp() {
   if (!activeSubpages.includes('app')) return;
 
   if (document.querySelector('.ggdeals_similar_game_price')) return;
-  await checkSimilarGame();
+  await clickCarouselButtons([0, 2]);
   const apps = await getAppIds();
   if (!apps) return;
   setDLCPrice(apps);
-  setSimilarGamePrice(apps);
+  setSimilarGamePrice(apps, { removeExtra: true });
   setPriceHistory(apps);
 }

@@ -1,5 +1,5 @@
 import { getFromStorage } from './storage';
-import type { AppData, PriceType } from './types';
+import type { AppData, AppMap, PriceType } from './types';
 
 export function waitForElm(selector: string): Promise<Element> {
   return new Promise((resolve) => {
@@ -52,4 +52,43 @@ export function checkPrice(app: AppData | undefined): string | null {
 
   const price = getLowestPrice(app.prices.currentRetail, app.prices.currentKeyshops, app.prices.currency);
   return price === 'N/A' ? null : price;
+}
+
+export async function clickCarouselButtons(buttonIndices: number[]): Promise<void> {
+  const morelike = document.querySelectorAll('[class*="buttonNext"]');
+  for (let i = 0; i < 8; i++) {
+    await new Promise((resolve) => setTimeout(resolve, i * 10));
+    for (const idx of buttonIndices) {
+      if (morelike.length > idx) (morelike[idx] as HTMLElement).click();
+    }
+  }
+}
+
+export function setSimilarGamePrice(apps: AppMap, { removeExtra = false } = {}): void {
+  for (const e of document.querySelectorAll('.ImpressionTrackedElement')) {
+    const id = e.querySelector<HTMLAnchorElement>('a[href*="store.steampowered.com/app/"]')?.href?.match(
+      /\/(app)\/(\d+)/
+    )?.[2];
+    if (!id) return;
+    const freeLabel = e.querySelector<HTMLElement>('.StoreSalePriceWidgetContainer div');
+    if (freeLabel?.innerText === 'Free to Play') continue;
+    const app = apps[id];
+
+    const price = getLowestPrice(
+      app?.prices?.currentRetail ?? null,
+      app?.prices?.currentKeyshops ?? null,
+      app?.prices?.currency ?? ''
+    );
+    if (price === 'N/A') continue;
+
+    const priceBlock = document.createElement('a');
+    priceBlock.href = app?.url || '#';
+    priceBlock.classList.add('ggdeals_similar_game_price');
+    priceBlock.innerText = price;
+    const bar = e.querySelector<HTMLElement>('.CapsuleBottomBar');
+    if (bar) priceBlock.style.opacity = window.getComputedStyle(bar).opacity;
+
+    e.prepend(priceBlock);
+    if (removeExtra) e.querySelector('._2_KY_e11FV0ftXR2_7TMmP')?.remove();
+  }
 }
