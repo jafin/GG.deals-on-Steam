@@ -42,7 +42,7 @@ function setRecommendedGamePrice(apps: AppMap) {
 }
 
 export async function initRecommended() {
-  await waitForElm('#topselling');
+  if (!await waitForElm('#topselling')) return;
 
   const activeSubpages = getFromStorage<Subpage[]>(STORAGE_KEYS.activeSubpages, DEFAULT_SUBPAGES);
   if (!activeSubpages.includes('recommended')) return;

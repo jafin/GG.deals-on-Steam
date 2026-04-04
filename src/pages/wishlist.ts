@@ -41,7 +41,7 @@ async function refreshPrices() {
 }
 
 export async function initWishlist() {
-  await waitForElm('section > div:last-of-type > div:last-of-type div div');
+  if (!await waitForElm('section > div:last-of-type > div:last-of-type div div')) return;
 
   const activeSubpages = getFromStorage<Subpage[]>(STORAGE_KEYS.activeSubpages, DEFAULT_SUBPAGES);
   if (!activeSubpages.includes('wishlist')) return;

@@ -93,7 +93,8 @@ function main() {
   injectStyles();
   mountSettingsPanel();
 
-  waitForElm('#global_header').then(() => {
+  waitForElm('#global_header').then((el) => {
+    if (!el) return;
     createSettingsButton();
     updateColors();
   });

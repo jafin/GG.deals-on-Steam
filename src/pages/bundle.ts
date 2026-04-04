@@ -30,7 +30,7 @@ function setBundleGamePrice(apps: AppMap) {
 }
 
 export async function initBundle() {
-  await waitForElm('.ImpressionTrackedElement');
+  if (!await waitForElm('.ImpressionTrackedElement')) return;
 
   const activeSubpages = getFromStorage<Subpage[]>(STORAGE_KEYS.activeSubpages, DEFAULT_SUBPAGES);
   if (!activeSubpages.includes('bundle')) return;

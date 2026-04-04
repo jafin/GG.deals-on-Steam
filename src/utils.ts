@@ -2,7 +2,7 @@ import { STORAGE_KEYS, DEFAULT_PRICE_TYPE } from './constants';
 import { getFromStorage } from './storage';
 import type { AppData, AppMap, PriceType } from './types';
 
-export function waitForElm(selector: string): Promise<Element> {
+export function waitForElm(selector: string, timeout = 30000): Promise<Element | null> {
   return new Promise((resolve) => {
     const existing = document.querySelector(selector);
     if (existing) return resolve(existing);
@@ -10,10 +10,17 @@ export function waitForElm(selector: string): Promise<Element> {
     const observer = new MutationObserver(() => {
       const el = document.querySelector(selector);
       if (el) {
-        resolve(el);
+        clearTimeout(timer);
         observer.disconnect();
+        resolve(el);
       }
     });
+
+    const timer = setTimeout(() => {
+      observer.disconnect();
+      resolve(null);
+    }, timeout);
+
     observer.observe(document.body, { childList: true, subtree: true });
   });
 }

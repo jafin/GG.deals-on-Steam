@@ -83,7 +83,7 @@ function setPriceHistory(apps: AppMap) {
 }
 
 export async function initApp() {
-  await waitForElm('.CapsuleDecorators');
+  if (!await waitForElm('.CapsuleDecorators')) return;
 
   const activeSubpages = getFromStorage<Subpage[]>(STORAGE_KEYS.activeSubpages, DEFAULT_SUBPAGES);
   if (!activeSubpages.includes('app')) return;
