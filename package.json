@@ -1,0 +1,27 @@
+{
+  "name": "GG.deals-on-Steam",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Displays the current lowest prices from GG.deals directly on Steam store pages.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "author": "Juzlus",
+  "license": "ISC",
+  "packageManager": "pnpm@10.18.2",
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild", "@esbuild/*"]
+  },
+  "dependencies": {
+    "@preact/signals": "^2.9.0",
+    "@preact/signals-core": "^1.14.1",
+    "preact": "^10.29.1"
+  },
+  "devDependencies": {
+    "@types/tampermonkey": "^5.0.5",
+    "typescript": "^6.0.2",
+    "vite": "^7.3.1",
+    "vite-plugin-monkey": "^7.1.9"
+  }
+}
