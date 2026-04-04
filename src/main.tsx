@@ -25,10 +25,11 @@ function createSettingsButton() {
   const loginLink = document.querySelector<HTMLAnchorElement>(
     'a.global_action_link[href*="https://store.steampowered.com/login/"]'
   );
+  const notifArea = document.getElementById('header_notification_area');
   if (loginLink) {
     loginLink.before(button);
-  } else if (document.getElementById('header_notification_area')) {
-    document.getElementById('header_notification_area')!.before(button);
+  } else if (notifArea) {
+    notifArea.before(button);
   } else {
     const envelope = document.getElementById('green_envelope_menu_root');
     if (envelope?.parentNode?.parentNode) {

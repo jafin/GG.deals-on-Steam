@@ -1,7 +1,7 @@
 import { getAppIds } from '../api';
 import { STORAGE_KEYS, DEFAULT_SUBPAGES } from '../constants';
 import { getFromStorage } from '../storage';
-import type { AppMap, Subpage } from '../types';
+import type { AppMap } from '../types';
 import { waitForElm, checkPrice } from '../utils';
 
 function setMainRecommendedGamePrice(apps: AppMap) {
@@ -44,7 +44,7 @@ function setRecommendedGamePrice(apps: AppMap) {
 export async function initRecommended() {
   if (!await waitForElm('#topselling')) return;
 
-  const activeSubpages = getFromStorage<Subpage[]>(STORAGE_KEYS.activeSubpages, DEFAULT_SUBPAGES);
+  const activeSubpages = getFromStorage(STORAGE_KEYS.activeSubpages, DEFAULT_SUBPAGES);
   if (!activeSubpages.includes('recommended')) return;
 
   if (document.querySelector('.ggdeals_recommended_price')) return;

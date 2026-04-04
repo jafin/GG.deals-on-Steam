@@ -1,7 +1,7 @@
 import { getAppIds } from '../api';
 import { STORAGE_KEYS, DEFAULT_SUBPAGES } from '../constants';
 import { getFromStorage } from '../storage';
-import type { AppMap, Subpage } from '../types';
+import type { AppMap } from '../types';
 import { waitForElm, getLowestPrice, clickCarouselButtons, setSimilarGamePrice } from '../utils';
 
 function setDLCPrice(apps: AppMap) {
@@ -85,7 +85,7 @@ function setPriceHistory(apps: AppMap) {
 export async function initApp() {
   if (!await waitForElm('.CapsuleDecorators')) return;
 
-  const activeSubpages = getFromStorage<Subpage[]>(STORAGE_KEYS.activeSubpages, DEFAULT_SUBPAGES);
+  const activeSubpages = getFromStorage(STORAGE_KEYS.activeSubpages, DEFAULT_SUBPAGES);
   if (!activeSubpages.includes('app')) return;
 
   if (document.querySelector('.ggdeals_similar_game_price')) return;

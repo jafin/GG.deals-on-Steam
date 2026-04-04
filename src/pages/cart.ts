@@ -1,7 +1,7 @@
 import { getAppIds } from '../api';
 import { STORAGE_KEYS, DEFAULT_SUBPAGES } from '../constants';
 import { getFromStorage } from '../storage';
-import type { AppMap, Subpage } from '../types';
+import type { AppMap } from '../types';
 import { waitForElm, checkPrice } from '../utils';
 
 function setMainCartGamePrice(apps: AppMap) {
@@ -49,7 +49,7 @@ function setRecommendationCartGamePrice(apps: AppMap) {
 export async function initCart() {
   if (!await waitForElm('.ImpressionTrackedElement')) return;
 
-  const activeSubpages = getFromStorage<Subpage[]>(STORAGE_KEYS.activeSubpages, DEFAULT_SUBPAGES);
+  const activeSubpages = getFromStorage(STORAGE_KEYS.activeSubpages, DEFAULT_SUBPAGES);
   if (!activeSubpages.includes('cart')) return;
 
   if (document.querySelector('.ggdeals_main_cart_price')) return;
