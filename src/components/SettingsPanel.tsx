@@ -111,7 +111,7 @@ function onColorChange(index: number, val: string) {
 function resetColors() {
   colors.value = [...DEFAULT_COLORS];
   setToStorage(STORAGE_KEYS.colors, DEFAULT_COLORS);
-  applyColors(defaults);
+  applyColors(DEFAULT_COLORS);
 }
 
 function applyColors(c: string[]) {
