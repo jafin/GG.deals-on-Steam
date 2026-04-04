@@ -10,13 +10,12 @@
 </div>
 
 
-# 🤔 About
+# About
 
 **GG.deals-on-Steam** is a userscript for [Steam](https://store.steampowered.com) that shows the **current lowest prices** of games from [GG.deals](https://gg.deals), directly on Steam pages.
 
 > [!NOTE]
 > The userscript is limited to **1000 price lookups per hour**.
-
 
 ## 🔍 Supported Steam pages
 - App page
@@ -39,13 +38,13 @@
 5. Enter your API key from [gg.deals/api](https://gg.deals/api/)
 
 
-## 🔥 Screenshots
+<!-- ## 🔥 Screenshots -->
 
-![Prieview 1](https://github.com/Juzlus/GG.deals-on-Steam/blob/server/icons/preview_1.png?raw=true)
-![Prieview 2](https://github.com/Juzlus/GG.deals-on-Steam/blob/server/icons/preview_2.png?raw=true)
-![Prieview 3](https://github.com/Juzlus/GG.deals-on-Steam/blob/server/icons/preview_3.png?raw=true)
-![Prieview 4](https://github.com/Juzlus/GG.deals-on-Steam/blob/server/icons/preview_4.png?raw=true)
-![Prieview 5](https://github.com/Juzlus/GG.deals-on-Steam/blob/server/icons/preview_5.png?raw=true)
+<!-- ![Prieview 1](https://github.com/jafin/GG.deals-on-Steam/blob/server/icons/preview_1.png?raw=true)
+![Prieview 2](https://github.com/jafin/GG.deals-on-Steam/blob/server/icons/preview_2.png?raw=true)
+![Prieview 3](https://github.com/jafin/GG.deals-on-Steam/blob/server/icons/preview_3.png?raw=true)
+![Prieview 4](https://github.com/jafin/GG.deals-on-Steam/blob/server/icons/preview_4.png?raw=true)
+![Prieview 5](https://github.com/jafin/GG.deals-on-Steam/blob/server/icons/preview_5.png?raw=true) -->
 
 ## 🔧 Changes from upstream
 
