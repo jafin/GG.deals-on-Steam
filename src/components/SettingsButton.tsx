@@ -16,17 +16,15 @@ export function SettingsButton() {
 
     GM_xmlhttpRequest({
       method: 'GET',
-      url: 'https://raw.githubusercontent.com/jafin/GG.deals-on-Steam/refs/heads/server/versions.json',
+      url: 'https://api.github.com/repos/jafin/GG.deals-on-Steam/releases/latest',
       onload(response) {
         if (response.status !== 200) return;
         try {
           const data = JSON.parse(response.responseText);
-          const latestVersion = data?.version_userscript ?? data?.version_chromium;
-          if (latestVersion) {
-            setToStorage(STORAGE_KEYS.latestVersion, latestVersion);
-            if (latestVersion !== __APP_VERSION__) {
-              alertStatus.value = 'update';
-            }
+          const latest = data.tag_name?.replace(/^v/, '');
+          if (latest && latest !== __APP_VERSION__) {
+            setToStorage(STORAGE_KEYS.latestVersion, latest);
+            alertStatus.value = 'update';
           }
         } catch {}
       },

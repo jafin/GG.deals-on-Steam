@@ -36,7 +36,7 @@ export default defineConfig({
         ],
         connect: [
           'api.gg.deals',
-          'raw.githubusercontent.com',
+          'api.github.com',
         ],
         require: [
           'https://cdn.jsdelivr.net/npm/preact@10.29.1/dist/preact.umd.js',
