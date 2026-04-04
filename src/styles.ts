@@ -252,14 +252,23 @@ const SETTINGS_CSS = `
 }
 
 .ggdeals-settings-panel {
+    all: initial;
+    display: block;
     background-color: #1b2838;
     color: #DCDEDF;
     font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    line-height: 1.4;
     width: 750px;
     max-height: 85vh;
     overflow-y: auto;
     border-radius: 8px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    box-sizing: border-box;
+}
+
+.ggdeals-settings-panel *, .ggdeals-settings-panel *::before, .ggdeals-settings-panel *::after {
+    box-sizing: border-box;
 }
 
 .ggdeals-settings-panel header {
