@@ -12,10 +12,10 @@
 
 # 🤔 About
 
-**GG.deals-on-Steam** is a browser extension for [Steam](https://store.steampowered.com) that shows the **current lowest prices** of games from [GG.deals](https://gg.deals), directly on Steam pages.
+**GG.deals-on-Steam** is a userscript for [Steam](https://store.steampowered.com) that shows the **current lowest prices** of games from [GG.deals](https://gg.deals), directly on Steam pages.
 
 > [!NOTE]
-> The extension is limited to **1000 price lookups per hours**.
+> The userscript is limited to **1000 price lookups per hour**.
 
 
 ## 🔍 Supported Steam pages
@@ -27,39 +27,16 @@
 - Recommended page
 
 
-## 📁 How to add an extension
+## 📁 How to install
 
-1. Extract the files to a folder
-2. Chromium:
-    - Go to the extensions page: `chrome://extensions`
-    - Enable developer mode
-    - Click the "`Upload unzipped`" button
-3. Firefox:
-    - Go to the extensions page: `about:addons`
-    - Click the gear icon
-    - Select the "`Install Add-on From File...`" option
-4. Select the folder with the extracted extension
-5. <details>
-    <summary>Open the extension settings page</summary>
-    <img src="https://github.com/Juzlus/GG.deals-on-Steam/blob/server/icons/settings.png?raw=true">
-    </details>
-6. Type your API key from [gg.deals/api](https://gg.deals/api/)
-
-
-## 🌐 Works on these browsers
-
-- [Google Chrome](https://www.google.com/chrome/)
-- [Microsoft Edge](https://www.microsoft.com/edge/download)
-- [Opera](https://www.opera.com/download) / [Opera GX](https://www.opera.com/gx)
-- [Vivaldi Browser](https://vivaldi.com/)
-- [Brave Browser](https://brave.com)
-- ... and others based on Chromium
-- [Mozilla Firefox](https://www.mozilla.org/firefox/)
-
-
-## 🌍 Available languages
-
-- English
+1. Install a userscript manager in your browser:
+    - [Tampermonkey](https://www.tampermonkey.net/) (Chrome, Edge, Firefox, Opera, Safari)
+    - [Greasemonkey](https://www.greasespot.net/) (Firefox)
+    - [Violentmonkey](https://violentmonkey.github.io/) (Chrome, Edge, Firefox, Opera)
+2. Install the userscript from the [latest release](https://github.com/Juzlus/GG.deals-on-Steam/releases/latest) - click the `.user.js` file and your userscript manager will prompt you to install it
+3. Visit any [Steam store](https://store.steampowered.com) page
+4. Click the GG.deals settings button in the Steam header to open settings
+5. Enter your API key from [gg.deals/api](https://gg.deals/api/)
 
 
 ## 🔥 Screenshots
@@ -70,31 +47,11 @@
 ![Prieview 4](https://github.com/Juzlus/GG.deals-on-Steam/blob/server/icons/preview_4.png?raw=true)
 ![Prieview 5](https://github.com/Juzlus/GG.deals-on-Steam/blob/server/icons/preview_5.png?raw=true)
 
-## 💼 Other projects
-<a href="https://github.com/Juzlus/HowLongToBeat-on-Steam">
-  <img src="https://raw.githubusercontent.com/Juzlus/HowLongToBeat-on-Steam/refs/heads/main/icons/HowLongToBeat-on-Steam.png">
-</a>
+## 🙏 Credits
 
-
-## 📝 Feedback
-
-If you have any Feedback or questions, please contact me at juzlus.biznes@gmail.com or [Discord](https://discordapp.com/users/284780352042434570).
-
-
-## 💝 Donate
-<span>
-  <a href="https://www.buymeacoffee.com/juzlus" target="_blank" alt="buymeacoffee" style="width: 40%; text-decoration: none; margin-right: 20px;">
-    <img src="https://www.codehim.com/wp-content/uploads/2022/09/bmc-button-640x180.png" style="height: 60px;">
-  </a>
-  <a>⠀</a>
-  <a href="https://buycoffee.to/juzlus" target="_blank" alt="buycoffee" style="text-decoration: none; width: 40%; background-color: rgb(0, 169, 98);border-radius: 10px;">
-    <img src="https://buycoffee.to/btn/buycoffeeto-btn-primary.svg" style="height: 60px">
-  </a>
-</span>
+This is a fork of the original [GG.deals-on-Steam](https://github.com/Juzlus/GG.deals-on-Steam) by [Juzlus](https://github.com/Juzlus). All credit for the original concept and design goes to them.
 
 
 ## ⚠️ Disclaimer
 
-_The GG.deals-on-Steam is an independent project developed by an individual and is not endorsed or affiliated with [GG.deals](https://gg.deals) or [Steam](https://steamcommunity.com)._
-
-_The author of the extension is not responsible for any consequences resulting from its use._
+_This project is not endorsed or affiliated with [GG.deals](https://gg.deals) or [Steam](https://steamcommunity.com). Use at your own risk._
