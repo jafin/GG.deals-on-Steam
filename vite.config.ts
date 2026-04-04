@@ -24,7 +24,7 @@ export default defineConfig({
         version,
         description: 'Displays the current lowest prices from GG.deals directly on Steam store pages.',
         author: 'jafin (fork of Juzlus)',
-        icon: 'https://raw.githubusercontent.com/jafin/GG.deals-on-Steam/refs/heads/server/icons/ggdeals_logo_white.png',
+        icon: 'https://raw.githubusercontent.com/jafin/GG.deals-on-Steam/3515259d5ffd957eb0777a91ae87056f66330517/icons/ggdeals_logo_white.png',
         match: [
           'https://store.steampowered.com/*',
         ],
