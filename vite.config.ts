@@ -1,6 +1,8 @@
 import { defineConfig } from 'vite';
 import monkey from 'vite-plugin-monkey';
-import { version } from './package.json';
+import { version as pkgVersion } from './package.json';
+
+const version = process.env.APP_VERSION || pkgVersion;
 
 export default defineConfig({
   define: {

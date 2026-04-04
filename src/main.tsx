@@ -1,9 +1,11 @@
 import { render } from 'preact';
 import { STORAGE_KEYS, DEFAULT_COLORS } from './constants';
 import { injectStyles } from './styles';
-import { getFromStorage, setToStorage } from './storage';
+import { getFromStorage } from './storage';
 import { waitForElm } from './utils';
-import { SettingsPanel, toggleSettingsPanel, applyColors } from './components/SettingsPanel';
+import { applyColors } from './colors';
+import { SettingsButton } from './components/SettingsButton';
+import { SettingsPanel } from './components/SettingsPanel';
 import { initApp } from './pages/app';
 import { initBundle } from './pages/bundle';
 import { initCart } from './pages/cart';
@@ -15,51 +17,31 @@ function updateColors() {
   applyColors(getFromStorage(STORAGE_KEYS.colors, DEFAULT_COLORS));
 }
 
-function createSettingsButton() {
+function mountSettingsButton() {
   if (document.querySelector('#ggdeals_settings_btn')) return;
-
-  const button = document.createElement('span');
-  button.id = 'ggdeals_settings_btn';
-  button.addEventListener('click', toggleSettingsPanel);
 
   const loginLink = document.querySelector<HTMLAnchorElement>(
     'a.global_action_link[href*="https://store.steampowered.com/login/"]'
   );
   const notifArea = document.getElementById('header_notification_area');
+  const envelope = document.getElementById('green_envelope_menu_root');
+
+  let anchor: Element | null = null;
+  let position: InsertPosition = 'beforebegin';
+
   if (loginLink) {
-    loginLink.before(button);
+    anchor = loginLink;
   } else if (notifArea) {
-    notifArea.before(button);
-  } else {
-    const envelope = document.getElementById('green_envelope_menu_root');
-    if (envelope?.parentNode?.parentNode) {
-      (envelope.parentNode.parentNode as HTMLElement).before(button);
-    }
+    anchor = notifArea;
+  } else if (envelope?.parentNode?.parentNode) {
+    anchor = envelope.parentNode.parentNode as Element;
   }
 
-  if (getFromStorage<string | null>(STORAGE_KEYS.token, null) == null) {
-    document.documentElement.style.setProperty('--settingAlertBg', 'red');
-    return;
-  }
+  if (!anchor) return;
 
-  // Check for updates
-  GM_xmlhttpRequest({
-    method: 'GET',
-    url: 'https://raw.githubusercontent.com/Juzlus/GG.deals-on-Steam/refs/heads/server/versions.json',
-    onload(response) {
-      if (response.status !== 200) return;
-      try {
-        const data = JSON.parse(response.responseText);
-        const latestVersion = data?.version_userscript ?? data?.version_chromium;
-        if (latestVersion) {
-          setToStorage(STORAGE_KEYS.latestVersion, latestVersion);
-          if (latestVersion !== __APP_VERSION__) {
-            document.documentElement.style.setProperty('--settingAlertBg', 'orange');
-          }
-        }
-      } catch {}
-    },
-  });
+  const container = document.createElement('span');
+  anchor.insertAdjacentElement(position, container);
+  render(<SettingsButton />, container);
 }
 
 function mountSettingsPanel() {
@@ -93,7 +75,7 @@ function main() {
 
   waitForElm('#global_header').then((el) => {
     if (!el) return;
-    createSettingsButton();
+    mountSettingsButton();
     updateColors();
   });
 

@@ -37,7 +37,7 @@ function setSimilarGamePrice(apps) {
         priceBlock.href = app?.url || "#";
         priceBlock.classList.add("ggdeals_similar_game_price");
         priceBlock.innerText = price;
-        priceBlock.style.opacity = window.getComputedStyle(e?.querySelector(".CapsuleBottomBar")).opacity;
+        priceBlock.style.opacity = globalThis.getComputedStyle(e?.querySelector(".CapsuleBottomBar")).opacity;
 
         e?.prepend(priceBlock);
         e?.querySelector("._2_KY_e11FV0ftXR2_7TMmP")?.remove();
@@ -45,7 +45,7 @@ function setSimilarGamePrice(apps) {
 }
 
 function setPriceHistory(apps) {
-    const id = window.location.href.match(/\/(app)\/(\d+)/)?.[2];
+    const id = /\/(app)\/(\d+)/.exec(globalThis.location.href)?.[2];
     const app = apps?.[id];
     if (!app) return;
 
@@ -65,15 +65,14 @@ function setPriceHistory(apps) {
     document?.querySelector("#game_area_purchase")?.prepend(historyBlock);
 }
 
-waitForElm('.CapsuleDecorators').then(async() => {
-    const activeSubpages = await getFromStorage("activeSubpages", ["app", "wishlist", "bundle", "cart", "search", "recommended"]);
-    if (!activeSubpages.includes("app")) return;
-    
-    if (document.querySelector(".ggdeals_similar_game_price")) return;
-    await checkSimilarGame();
-    const apps = await getAppIds();
-    if (!apps) return;
-    setDLCPrice(apps);
-    setSimilarGamePrice(apps);
-    setPriceHistory(apps);
-});
+await waitForElm('.CapsuleDecorators');
+const activeSubpages = await getFromStorage("activeSubpages", ["app", "wishlist", "bundle", "cart", "search", "recommended"]);
+if (!activeSubpages.includes("app")) return;
+
+if (document.querySelector(".ggdeals_similar_game_price")) return;
+await checkSimilarGame();
+const apps = await getAppIds();
+if (!apps) return;
+setDLCPrice(apps);
+setSimilarGamePrice(apps);
+setPriceHistory(apps);

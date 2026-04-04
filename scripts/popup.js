@@ -4,9 +4,9 @@ function toogleApiKey() {
 }
 
 async function updateColors(save) {
-    color1 = document.getElementById("primaryColor").value;
-    color2 = document.getElementById("secondaryColor").value;
-    color3 = document.getElementById("backgroundColor").value;
+    let color1 = document.getElementById("primaryColor").value;
+    let color2 = document.getElementById("secondaryColor").value;
+    let color3 = document.getElementById("backgroundColor").value;
     if (color1) document.documentElement.style.setProperty("--priceColor", color1);
     if (color2) document.documentElement.style.setProperty("--hoverPriceColor", color2);
     if (color3) document.documentElement.style.setProperty("--priceBgColor", color3);
@@ -15,9 +15,9 @@ async function updateColors(save) {
 }
 
 async function resetColors() {
-    color1 = document.getElementById("primaryColor").value = "#BEEE11";
-    color2 = document.getElementById("secondaryColor").value = "#a6cc1b";
-    color3 = document.getElementById("backgroundColor").value = "#344654";
+    let color1 = document.getElementById("primaryColor").value = "#BEEE11";
+    let color2 = document.getElementById("secondaryColor").value = "#a6cc1b";
+    let color3 = document.getElementById("backgroundColor").value = "#344654";
     document.documentElement.style.setProperty("--priceColor", color1);
     document.documentElement.style.setProperty("--hoverPriceColor", color2);
     document.documentElement.style.setProperty("--priceBgColor", color3);
@@ -103,7 +103,7 @@ async function init() {
     document.getElementById("ratelimit-remaining").innerText = await getFromStorage("x-ratelimit-remaining", "0");
     document.getElementById("ratelimit-reset").innerText = new Date(await getFromStorage("x-ratelimit-reset", "0") * 1000).toLocaleString();
 
-    if (window.matchMedia("(max-width: 1000px)").matches) {
+    if (globalThis.matchMedia("(max-width: 1000px)").matches) {
         if (document.querySelector("#priceType label:nth-child(1) a:nth-child(3)"))
             document.querySelector("#priceType label:nth-child(1) a:nth-child(3)").innerText = "Steam, Epic Games, Gog, Battle.net, Ubisoft Store, Microsoft Store...";
         if (document.querySelector("#priceType label:nth-child(2) a:nth-child(3)"))

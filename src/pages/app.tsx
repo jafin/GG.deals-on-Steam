@@ -6,9 +6,11 @@ import { getFromStorage } from '../storage';
 import type { AppMap } from '../types';
 import { waitForElm, getLowestPrice, clickCarouselButtons, setSimilarGamePrice } from '../utils';
 
+const APP_ID_RE = /\/app\/(\d+)/;
+
 function setDLCPrice(apps: AppMap) {
   for (const e of document.querySelectorAll<HTMLAnchorElement>('.game_area_dlc_row')) {
-    const id = e.href?.match(/\/(app)\/(\d+)/)?.[2];
+    const id = e.href?.match(APP_ID_RE)?.[1];
     if (!id) continue;
     const app = apps[id];
     const dlcPrice = e.querySelector<HTMLElement>('.game_area_dlc_price');
@@ -27,7 +29,7 @@ function setDLCPrice(apps: AppMap) {
 }
 
 function setPriceHistory(apps: AppMap) {
-  const id = window.location.href.match(/\/(app)\/(\d+)/)?.[2];
+  const id = window.location.href.match(APP_ID_RE)?.[1];
   if (!id) return;
   const app = apps[id];
   if (!app) return;

@@ -48,7 +48,6 @@
 }
 
 .ggdeals_price_history {
-    display: inline-block;
     background-color: rgba(0, 0, 0, 0.2);
     margin-bottom: 10px;
     font-family: "Motiva Sans", Arial, Helvetica, sans-serif;
@@ -83,10 +82,7 @@
     height: 32px;
     opacity: 0.5;
     transition: 0.2s opacity;
-}
-
-.ggdeals_price_history img {
-    background-repeat: no-repeat;
+     background-repeat: no-repeat;
     background-position: center;
 }
 

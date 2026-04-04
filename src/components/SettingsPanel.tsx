@@ -1,4 +1,5 @@
-import { signal, computed } from '@preact/signals';
+import { signal, computed, effect } from '@preact/signals';
+import { applyColors } from '../colors';
 import { STORAGE_KEYS, DEFAULT_SUBPAGES, DEFAULT_PRICE_TYPE, DEFAULT_COLORS, DEFAULT_REGION } from '../constants';
 import { getFromStorage, setToStorage, removeFromStorage } from '../storage';
 import type { PriceType, Subpage } from '../types';
@@ -61,6 +62,15 @@ const rateLimitReset = signal(getFromStorage(STORAGE_KEYS.rateLimitReset, '0'));
 
 const resetTimeDisplay = computed(() => new Date(Number(rateLimitReset.value) * 1000).toLocaleString());
 
+effect(() => {
+  if (!visible.value) return;
+  const onKeyDown = (e: KeyboardEvent) => {
+    if (e.key === 'Escape') visible.value = false;
+  };
+  document.addEventListener('keydown', onKeyDown);
+  return () => document.removeEventListener('keydown', onKeyDown);
+});
+
 export function toggleSettingsPanel() {
   visible.value = !visible.value;
   if (visible.value) {
@@ -114,14 +124,10 @@ function resetColors() {
   applyColors(DEFAULT_COLORS);
 }
 
-export function applyColors(c: readonly string[]) {
-  document.documentElement.style.setProperty('--priceColor', c[0] ?? DEFAULT_COLORS[0]);
-  document.documentElement.style.setProperty('--hoverPriceColor', c[1] ?? DEFAULT_COLORS[1]);
-  document.documentElement.style.setProperty('--priceBgColor', c[2] ?? DEFAULT_COLORS[2]);
-}
 
 function clearStorage() {
   removeFromStorage(STORAGE_KEYS.lastAppIds);
+  removeFromStorage(STORAGE_KEYS.lastAppIdsTimestamp);
   priceInStorage.value = 0;
 }
 
@@ -129,47 +135,53 @@ export function SettingsPanel() {
   if (!visible.value) return null;
 
   return (
-    <div class="ggdeals-settings-overlay" onClick={() => (visible.value = false)}>
-      <div class="ggdeals-settings-panel" onClick={(e) => e.stopPropagation()}>
+    <div class="ggdeals-settings-overlay" role="presentation" onClick={() => (visible.value = false)}>
+      <dialog class="ggdeals-settings-panel" open onClick={(e) => e.stopPropagation()}>
         <header>
           <h1>GG.deals on Steam - Settings</h1>
           <button class="ggdeals-close-btn" onClick={() => (visible.value = false)}>✕</button>
         </header>
         <main>
           <h3>General</h3>
-          <div class="optionBlock">
-            <p>API key:</p>
-            <button class="ggdeals-show-key" onClick={() => (showApiKey.value = !showApiKey.value)}>👁</button>
-            <input
-              type={showApiKey.value ? 'text' : 'password'}
-              value={apiKey.value}
-              onInput={(e) => onApiKeyChange((e.target as HTMLInputElement).value)}
-            />
-            <small>
-              You can get your API key from{' '}
-              <a href="https://gg.deals/api/" target="_blank">
-                this page
-              </a>
-              .
-            </small>
+          <div class="ggdeals-row">
+            <div class="optionBlock">
+              <p>API key: <button class="ggdeals-show-key" onClick={() => (showApiKey.value = !showApiKey.value)}>👁</button></p>
+              <input
+                type={showApiKey.value ? 'text' : 'password'}
+                value={apiKey.value}
+                onInput={(e) => onApiKeyChange((e.target as HTMLInputElement).value)}
+              />
+              <small>
+                You can get your API key from{' '}
+                <a href="https://gg.deals/api/" target="_blank" rel="noopener">this page</a>{'.'}
+              </small>
+            </div>
+
+            <div class="optionBlock">
+              <p>Region:</p>
+              <select value={region.value} onChange={(e) => onRegionChange((e.target as HTMLSelectElement).value)}>
+                {REGIONS.map((r) => (
+                  <option key={r.value} value={r.value}>
+                    {r.label}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
-          <div class="optionBlock">
-            <p>Region:</p>
-            <select value={region.value} onChange={(e) => onRegionChange((e.target as HTMLSelectElement).value)}>
-              {REGIONS.map((r) => (
-                <option key={r.value} value={r.value}>
-                  {r.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div class="optionBlock">
-            <p>
-              Prices in storage: <b>{priceInStorage.value}</b>
-            </p>
-            <button class="ggdeals-btn" onClick={clearStorage}>Clear Storage</button>
+          <h3>Status</h3>
+          <div class="ggdeals-row">
+            <div class="optionBlock">
+              <p>Prices in storage: <b>{priceInStorage.value}</b></p>
+              <button class="ggdeals-btn" onClick={clearStorage}>Clear Storage</button>
+            </div>
+            <div class="optionBlock">
+              <p>
+                Remaining API queries: <b>{rateLimitRemaining.value}</b> / <b>{rateLimitLimit.value}</b>
+                <br />
+                Reset time: <b>{resetTimeDisplay.value}</b>
+              </p>
+            </div>
           </div>
 
           <h3>Active subpages</h3>
@@ -181,8 +193,8 @@ export function SettingsPanel() {
                   checked={activeSubpages.value.includes(s.value)}
                   onChange={() => onSubpageToggle(s.value)}
                 />
-                <a>{s.label}</a>
-                <a class="desc">{s.desc}</a>
+                <span>{s.label}</span>
+                <span class="desc">{s.desc}</span>
               </label>
             ))}
           </div>
@@ -196,8 +208,8 @@ export function SettingsPanel() {
                   checked={priceType.value.includes(pt.value)}
                   onChange={() => onPriceTypeToggle(pt.value)}
                 />
-                <a>{pt.label}</a>
-                <a class="desc">{pt.desc}</a>
+                <span>{pt.label}</span>
+                <span class="desc">{pt.desc}</span>
               </label>
             ))}
           </div>
@@ -221,14 +233,8 @@ export function SettingsPanel() {
             <button class="ggdeals-btn" onClick={resetColors}>Default Style</button>
           </div>
 
-          <h3>Ratelimit</h3>
-          <p>
-            Remaining API queries: <b>{rateLimitRemaining.value}</b> / <b>{rateLimitLimit.value}</b>
-            <br />
-            Reset time: <b>{resetTimeDisplay.value}</b>
-          </p>
         </main>
-      </div>
+      </dialog>
     </div>
   );
 }

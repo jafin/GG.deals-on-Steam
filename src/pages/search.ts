@@ -3,6 +3,8 @@ import { STORAGE_KEYS, DEFAULT_SUBPAGES, DEFAULT_PRICE_TYPE } from '../constants
 import { getFromStorage } from '../storage';
 import type { AppMap, PriceType } from '../types';
 
+const APP_ID_RE = /\/app\/(\d+)/;
+
 function setSearchGamePrice(apps: AppMap) {
   const priceType = getFromStorage<PriceType[]>(STORAGE_KEYS.priceType, DEFAULT_PRICE_TYPE);
   const showOfficial = priceType.includes('official');
@@ -15,7 +17,7 @@ function setSearchGamePrice(apps: AppMap) {
     const nameBlock = e.querySelector('.responsive_search_name_combined');
     if (!nameBlock) continue;
 
-    const id = e.href?.match(/\/(app)\/(\d+)/)?.[2];
+    const id = e.href?.match(APP_ID_RE)?.[1];
     if (!id) continue;
     const app = apps[id];
     if (!app?.prices) continue;

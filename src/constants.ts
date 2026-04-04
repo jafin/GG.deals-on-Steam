@@ -4,7 +4,7 @@ export const STORAGE_KEYS = {
   token: 'token',
   region: 'region',
   lastAppIds: 'lastAppIds',
-  firstUpdate: 'firstUpdate',
+  lastAppIdsTimestamp: 'lastAppIdsTimestamp',
   colors: 'colors',
   activeSubpages: 'activeSubpages',
   priceType: 'priceType',

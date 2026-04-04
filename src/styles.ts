@@ -92,6 +92,11 @@ const CONTENT_CSS = `
     color: var(--priceColor);
 }
 
+.ggdeals_price_diff {
+    font-size: 11px;
+    opacity: 0.7;
+}
+
 .ggdeals_recommended_price {
     line-height: 12px;
     font-size: 11px;
@@ -327,7 +332,7 @@ const SETTINGS_CSS = `
 
 .ggdeals-settings-panel header {
     background-color: #171d25;
-    height: 70px;
+    height: 55px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -364,8 +369,18 @@ const SETTINGS_CSS = `
 .ggdeals-settings-panel h3 {
     font-size: 22px;
     border-bottom: 1px solid #ccc;
-    margin: 20px 0;
+    margin: 15px 0; 10px 0;
     padding-bottom: 6px;
+}
+
+.ggdeals-row {
+    display: flex;
+    gap: 16px;
+}
+
+.ggdeals-row > .optionBlock {
+    flex: 1;
+    min-width: 0;
 }
 
 .ggdeals-settings-panel .optionBlock {
@@ -456,12 +471,12 @@ const SETTINGS_CSS = `
     display: none;
 }
 
-.ggdeals-checkbox-group label a {
+.ggdeals-checkbox-group label span {
     padding: 0 10px;
     color: inherit !important;
 }
 
-.ggdeals-checkbox-group label a.desc {
+.ggdeals-checkbox-group label span.desc {
     margin-left: auto;
     opacity: 0.6;
     text-align: right;

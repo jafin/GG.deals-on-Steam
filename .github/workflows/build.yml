@@ -1,0 +1,41 @@
+name: Build
+
+on:
+  push:
+    branches: [chromium]
+    tags: ['v*']
+  pull_request:
+    branches: [chromium]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Set version from git
+        run: |
+          desc=$(git describe --tags --match 'v*' 2>/dev/null || echo "v0.0.0-0-g$(git rev-parse --short HEAD)")
+          if [[ "$desc" =~ ^v([^-]+)$ ]]; then
+            echo "APP_VERSION=${BASH_REMATCH[1]}" >> "$GITHUB_ENV"
+          elif [[ "$desc" =~ ^v([^-]+)-([0-9]+)- ]]; then
+            echo "APP_VERSION=${BASH_REMATCH[1]}-beta.${BASH_REMATCH[2]}" >> "$GITHUB_ENV"
+          fi
+
+      - run: pnpm build
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GG.deals-on-Steam.user.js
+          path: dist/GG.deals-on-Steam.user.js

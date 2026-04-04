@@ -8,9 +8,9 @@ function fetchURL(url: string): Promise<string | null> {
       method: 'GET',
       url,
       onload(response) {
-        const limitHeader = response.responseHeaders.match(/x-ratelimit-limit:\s*(\S+)/i);
-        const remainingHeader = response.responseHeaders.match(/x-ratelimit-remaining:\s*(\S+)/i);
-        const resetHeader = response.responseHeaders.match(/x-ratelimit-reset:\s*(\S+)/i);
+        const limitHeader = /x-ratelimit-limit:\s*(\S+)/i.exec(response.responseHeaders);
+        const remainingHeader = /x-ratelimit-remaining:\s*(\S+)/i.exec(response.responseHeaders);
+        const resetHeader = /x-ratelimit-reset:\s*(\S+)/i.exec(response.responseHeaders);
 
         setToStorage(STORAGE_KEYS.rateLimitLimit, limitHeader?.[1] ?? null);
         setToStorage(STORAGE_KEYS.rateLimitRemaining, remainingHeader?.[1] ?? null);
@@ -35,26 +35,22 @@ function fetchURL(url: string): Promise<string | null> {
   });
 }
 
-function checkDate(timestamp: number, extra: number): boolean {
-  const now = Math.floor(Date.now() / 1000);
-  return timestamp + extra < now;
-}
+const STALE_MS = 60 * 60 * 1000; // 1 hour
 
 export async function getAppIds(): Promise<AppMap | null> {
-  const reset = Number(getFromStorage(STORAGE_KEYS.rateLimitReset, 0));
-  const remaining = Number(getFromStorage(STORAGE_KEYS.rateLimitRemaining, 0));
-  const firstUpdate = Number(getFromStorage(STORAGE_KEYS.firstUpdate, 0));
+  const cachedAt = Number(getFromStorage(STORAGE_KEYS.lastAppIdsTimestamp, 0));
+  const isStale = Date.now() - cachedAt > STALE_MS;
 
-  if (checkDate(reset, 3600) || (remaining > 40 && checkDate(firstUpdate, 3600))) {
+  if (isStale) {
     removeFromStorage(STORAGE_KEYS.lastAppIds);
-    setToStorage(STORAGE_KEYS.firstUpdate, Math.floor(Date.now() / 1000));
   }
 
   const lastAppIds: AppMap = getFromStorage(STORAGE_KEYS.lastAppIds, {});
   const appIds = new Set<string>();
 
+  const APP_ID_RE = /\/app\/(\d+)/;
   document.querySelectorAll<HTMLAnchorElement>('[href*="store.steampowered.com/app/"]').forEach((e) => {
-    const id = new RegExp(/\/(app)\/(\d+)/).exec(e.href)?.[2];
+    const id = APP_ID_RE.exec(e.href)?.[1];
     if (id && !(id in lastAppIds) && !e.classList.contains('ggdeals_used_price')) {
       appIds.add(id);
     }
@@ -68,15 +64,21 @@ export async function getAppIds(): Promise<AppMap | null> {
   const token = getFromStorage<string | null>(STORAGE_KEYS.token, null);
   if (!token) return null;
 
-  let data: AppMap = {};
   const appIdsArray = Array.from(appIds);
   const region = getFromStorage(STORAGE_KEYS.region, DEFAULT_REGION);
+  const chunks = Array.from(
+    { length: Math.ceil(appIdsArray.length / 100) },
+    (_, i) => appIdsArray.slice(i * 100, (i + 1) * 100),
+  );
 
-  for (let i = 0; i < Math.ceil(appIdsArray.length / 100); i++) {
-    const chunk = appIdsArray.slice(i * 100, (i + 1) * 100);
-    const raw = await fetchURL(
-      `https://api.gg.deals/v1/prices/by-steam-app-id/?ids=${chunk.toString()}&key=${token}&region=${region}`
-    );
+  const results = await Promise.all(
+    chunks.map((chunk) =>
+      fetchURL(`https://api.gg.deals/v1/prices/by-steam-app-id/?ids=${chunk}&key=${token}&region=${region}`)
+    ),
+  );
+
+  let data: AppMap = {};
+  for (const raw of results) {
     if (raw) {
       try {
         data = { ...data, ...JSON.parse(raw)?.data };
@@ -88,6 +90,7 @@ export async function getAppIds(): Promise<AppMap | null> {
 
   const merged = { ...lastAppIds, ...data };
   setToStorage(STORAGE_KEYS.lastAppIds, merged);
+  setToStorage(STORAGE_KEYS.lastAppIdsTimestamp, Date.now());
   console.log(`[GG.deals on Steam] From Fetch: ${appIds.size}`);
   return merged;
 }
