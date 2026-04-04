@@ -11,7 +11,8 @@ function setMainCartGamePrice(apps: AppMap) {
       if (!priceText) return;
 
       const id = e.href?.match(/\/(app)\/(\d+)/)?.[2];
-      const app = apps[id!];
+      if (!id) return;
+      const app = apps[id];
 
       const price = checkPrice(app);
       if (!price) return;
@@ -33,7 +34,8 @@ function setRecommendationCartGamePrice(apps: AppMap) {
       if (!priceText) return;
 
       const id = e.href?.match(/\/(app)\/(\d+)/)?.[2];
-      const app = apps[id!];
+      if (!id) return;
+      const app = apps[id];
 
       const price = checkPrice(app);
       if (!price) return;

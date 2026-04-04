@@ -11,7 +11,8 @@ function setWishlistGamePrice(apps: AppMap) {
     const id = e.querySelector<HTMLAnchorElement>('a[href*="store.steampowered.com/app/"]')?.href?.match(
       /\/(app)\/(\d+)/
     )?.[2];
-    const app = apps[id!];
+    if (!id) return;
+    const app = apps[id];
 
     const price = checkPrice(app);
     if (!price) return;

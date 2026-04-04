@@ -15,7 +15,8 @@ async function checkSimilarGame() {
 function setDLCPrice(apps: AppMap) {
   document.querySelectorAll<HTMLAnchorElement>('.game_area_dlc_row').forEach(async (e) => {
     const id = e.href?.match(/\/(app)\/(\d+)/)?.[2];
-    const app = apps[id!];
+    if (!id) return;
+    const app = apps[id];
     const dlcPrice = e.querySelector<HTMLElement>('.game_area_dlc_price');
     if (dlcPrice) dlcPrice.style.marginRight = '80px';
 
@@ -36,9 +37,10 @@ function setSimilarGamePrice(apps: AppMap) {
     const id = e.querySelector<HTMLAnchorElement>('a[href*="store.steampowered.com/app/"]')?.href?.match(
       /\/(app)\/(\d+)/
     )?.[2];
+    if (!id) return;
     const freeLabel = e.querySelector<HTMLElement>('.StoreSalePriceWidgetContainer div');
     if (freeLabel?.innerText === 'Free to Play') return;
-    const app = apps[id!];
+    const app = apps[id];
 
     const price = getLowestPrice(
       app?.prices?.currentRetail ?? null,
@@ -61,7 +63,8 @@ function setSimilarGamePrice(apps: AppMap) {
 
 function setPriceHistory(apps: AppMap) {
   const id = window.location.href.match(/\/(app)\/(\d+)/)?.[2];
-  const app = apps[id!];
+  if (!id) return;
+  const app = apps[id];
   if (!app) return;
 
   if (
@@ -76,18 +79,42 @@ function setPriceHistory(apps: AppMap) {
   const historyBlock = document.createElement('a');
   historyBlock.href = app.url || '#';
   historyBlock.classList.add('ggdeals_price_history');
-  historyBlock.innerHTML =
-    `<img src="https://github.com/Juzlus/GG.deals-on-Steam/blob/server/icons/ggdeals_logo_white.png?raw=true"></img><div>` +
-    `<p class="ggdeals_current">Current price is <b class="ggdeals_price">${app.prices.currentRetail} ${app.prices.currency}</b> at Official shops` +
-    (app.prices.currentKeyshops
-      ? ` and <b class="ggdeals_price">${app.prices.currentKeyshops} ${app.prices.currency}</b> at Keyshops`
-      : '') +
-    `</p>` +
-    `<p class="ggdeals_lowest">The lowest price recorded is <a class="ggdeals_price">${app.prices.historicalRetail} ${app.prices.currency}</a> at Official shops` +
-    (app.prices.historicalKeyshops
-      ? ` and <a class="ggdeals_price">${app.prices.historicalKeyshops} ${app.prices.currency}</a> at Keyshops`
-      : '') +
-    `</p></div>`;
+
+  const img = document.createElement('img');
+  img.src = 'https://github.com/Juzlus/GG.deals-on-Steam/blob/server/icons/ggdeals_logo_white.png?raw=true';
+
+  const infoDiv = document.createElement('div');
+
+  const currentP = document.createElement('p');
+  currentP.classList.add('ggdeals_current');
+  currentP.append('Current price is ');
+  const retailPrice = document.createElement('b');
+  retailPrice.classList.add('ggdeals_price');
+  retailPrice.textContent = `${app.prices.currentRetail} ${app.prices.currency}`;
+  currentP.append(retailPrice, ' at Official shops');
+  if (app.prices.currentKeyshops) {
+    const keyshopPrice = document.createElement('b');
+    keyshopPrice.classList.add('ggdeals_price');
+    keyshopPrice.textContent = `${app.prices.currentKeyshops} ${app.prices.currency}`;
+    currentP.append(' and ', keyshopPrice, ' at Keyshops');
+  }
+
+  const lowestP = document.createElement('p');
+  lowestP.classList.add('ggdeals_lowest');
+  lowestP.append('The lowest price recorded is ');
+  const histRetail = document.createElement('a');
+  histRetail.classList.add('ggdeals_price');
+  histRetail.textContent = `${app.prices.historicalRetail} ${app.prices.currency}`;
+  lowestP.append(histRetail, ' at Official shops');
+  if (app.prices.historicalKeyshops) {
+    const histKeyshop = document.createElement('a');
+    histKeyshop.classList.add('ggdeals_price');
+    histKeyshop.textContent = `${app.prices.historicalKeyshops} ${app.prices.currency}`;
+    lowestP.append(' and ', histKeyshop, ' at Keyshops');
+  }
+
+  infoDiv.append(currentP, lowestP);
+  historyBlock.append(img, infoDiv);
 
   document.querySelector('#game_area_purchase')?.prepend(historyBlock);
 }

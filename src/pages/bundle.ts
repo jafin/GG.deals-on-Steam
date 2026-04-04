@@ -16,7 +16,8 @@ function setBundleGamePrice(apps: AppMap) {
     const id = e.querySelector<HTMLAnchorElement>('a[href*="store.steampowered.com/app/"]')?.href?.match(
       /\/(app)\/(\d+)/
     )?.[2];
-    const app = apps[id!];
+    if (!id) return;
+    const app = apps[id];
 
     const price = getLowestPrice(
       app?.prices?.currentRetail ?? null,
@@ -40,9 +41,10 @@ function setSimilarGamePrice(apps: AppMap) {
     const id = e.querySelector<HTMLAnchorElement>('a[href*="store.steampowered.com/app/"]')?.href?.match(
       /\/(app)\/(\d+)/
     )?.[2];
+    if (!id) return;
     const freeLabel = e.querySelector<HTMLElement>('.StoreSalePriceWidgetContainer div');
     if (freeLabel?.innerText === 'Free to Play') return;
-    const app = apps[id!];
+    const app = apps[id];
 
     const price = getLowestPrice(
       app?.prices?.currentRetail ?? null,

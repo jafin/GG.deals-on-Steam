@@ -77,7 +77,11 @@ export async function getAppIds(): Promise<AppMap | null> {
       `https://api.gg.deals/v1/prices/by-steam-app-id/?ids=${chunk.toString()}&key=${token}&region=${region}`
     );
     if (raw) {
-      data = { ...data, ...JSON.parse(raw)?.data };
+      try {
+        data = { ...data, ...JSON.parse(raw)?.data };
+      } catch {
+        console.warn('[GG.deals on Steam] Failed to parse API response');
+      }
     }
   }
 
