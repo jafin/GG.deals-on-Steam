@@ -28,10 +28,9 @@ export function waitForElm(selector: string, timeout = 30000): Promise<Element |
 export function getLowestPrice(
   officialStorePrice: string | null,
   keyshopPrice: string | null,
-  currency: string
+  currency: string,
+  priceType: PriceType[] = getFromStorage<PriceType[]>(STORAGE_KEYS.priceType, DEFAULT_PRICE_TYPE)
 ): string {
-  const priceType = getFromStorage<PriceType[]>(STORAGE_KEYS.priceType, DEFAULT_PRICE_TYPE);
-
   let price: string | null;
   if (priceType.length === 2) {
     if (officialStorePrice == null && keyshopPrice == null) price = null;
@@ -47,7 +46,10 @@ export function getLowestPrice(
   return price == null ? 'N/A' : `${price} ${currency}`;
 }
 
-export function checkPrice(app: AppData | undefined): string | null {
+export function checkPrice(
+  app: AppData | undefined,
+  priceType: PriceType[] = getFromStorage<PriceType[]>(STORAGE_KEYS.priceType, DEFAULT_PRICE_TYPE)
+): string | null {
   if (
     !app?.prices?.currentRetail ||
     (app.prices.currentRetail === '0.00' &&
@@ -58,7 +60,7 @@ export function checkPrice(app: AppData | undefined): string | null {
     return null;
   }
 
-  const price = getLowestPrice(app.prices.currentRetail, app.prices.currentKeyshops, app.prices.currency);
+  const price = getLowestPrice(app.prices.currentRetail, app.prices.currentKeyshops, app.prices.currency, priceType);
   return price === 'N/A' ? null : price;
 }
 
@@ -73,11 +75,12 @@ export async function clickCarouselButtons(buttonIndices: number[]): Promise<voi
 }
 
 export function setSimilarGamePrice(apps: AppMap, { removeExtra = false } = {}): void {
+  const priceType = getFromStorage<PriceType[]>(STORAGE_KEYS.priceType, DEFAULT_PRICE_TYPE);
   for (const e of document.querySelectorAll('.ImpressionTrackedElement')) {
     const id = e.querySelector<HTMLAnchorElement>('a[href*="store.steampowered.com/app/"]')?.href?.match(
       /\/(app)\/(\d+)/
     )?.[2];
-    if (!id) return;
+    if (!id) continue;
     const freeLabel = e.querySelector<HTMLElement>('.StoreSalePriceWidgetContainer div');
     if (freeLabel?.innerText === 'Free to Play') continue;
     const app = apps[id];
@@ -85,7 +88,8 @@ export function setSimilarGamePrice(apps: AppMap, { removeExtra = false } = {}):
     const price = getLowestPrice(
       app?.prices?.currentRetail ?? null,
       app?.prices?.currentKeyshops ?? null,
-      app?.prices?.currency ?? ''
+      app?.prices?.currency ?? '',
+      priceType
     );
     if (price === 'N/A') continue;
 

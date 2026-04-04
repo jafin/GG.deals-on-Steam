@@ -53,7 +53,7 @@ const showApiKey = signal(false);
 const region = signal(getFromStorage(STORAGE_KEYS.region, DEFAULT_REGION));
 const activeSubpages = signal(getFromStorage<Subpage[]>(STORAGE_KEYS.activeSubpages, DEFAULT_SUBPAGES));
 const priceType = signal(getFromStorage<PriceType[]>(STORAGE_KEYS.priceType, DEFAULT_PRICE_TYPE));
-const colors = signal(getFromStorage<string[]>(STORAGE_KEYS.colors, DEFAULT_COLORS));
+const colors = signal(getFromStorage<readonly string[]>(STORAGE_KEYS.colors, DEFAULT_COLORS));
 const priceInStorage = signal(Object.keys(getFromStorage(STORAGE_KEYS.lastAppIds, {})).length);
 const rateLimitLimit = signal(getFromStorage(STORAGE_KEYS.rateLimitLimit, '100'));
 const rateLimitRemaining = signal(getFromStorage(STORAGE_KEYS.rateLimitRemaining, '0'));
@@ -114,10 +114,10 @@ function resetColors() {
   applyColors(DEFAULT_COLORS);
 }
 
-function applyColors(c: string[]) {
-  document.documentElement.style.setProperty('--priceColor', c[0] || DEFAULT_COLORS[0]);
-  document.documentElement.style.setProperty('--hoverPriceColor', c[1] || DEFAULT_COLORS[1]);
-  document.documentElement.style.setProperty('--priceBgColor', c[2] || DEFAULT_COLORS[2]);
+export function applyColors(c: readonly string[]) {
+  document.documentElement.style.setProperty('--priceColor', c[0] ?? DEFAULT_COLORS[0]);
+  document.documentElement.style.setProperty('--hoverPriceColor', c[1] ?? DEFAULT_COLORS[1]);
+  document.documentElement.style.setProperty('--priceBgColor', c[2] ?? DEFAULT_COLORS[2]);
 }
 
 function clearStorage() {

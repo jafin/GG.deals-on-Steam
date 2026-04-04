@@ -18,6 +18,6 @@ export const DEFAULT_SUBPAGES: Subpage[] = ['app', 'wishlist', 'bundle', 'cart',
 
 export const DEFAULT_PRICE_TYPE: PriceType[] = ['official', 'keyshop'];
 
-export const DEFAULT_COLORS = ['#BEEE11', '#a6cc1b', '#344654'];
+export const DEFAULT_COLORS = ['#BEEE11', '#a6cc1b', '#344654'] as const;
 
 export const DEFAULT_REGION = 'us';

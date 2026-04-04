@@ -3,7 +3,7 @@ import { STORAGE_KEYS, DEFAULT_COLORS } from './constants';
 import { injectStyles } from './styles';
 import { getFromStorage, setToStorage } from './storage';
 import { waitForElm } from './utils';
-import { SettingsPanel, toggleSettingsPanel } from './components/SettingsPanel';
+import { SettingsPanel, toggleSettingsPanel, applyColors } from './components/SettingsPanel';
 import { initApp } from './pages/app';
 import { initBundle } from './pages/bundle';
 import { initCart } from './pages/cart';
@@ -12,10 +12,7 @@ import { initSearch } from './pages/search';
 import { initWishlist } from './pages/wishlist';
 
 function updateColors() {
-  const colors = getFromStorage(STORAGE_KEYS.colors, DEFAULT_COLORS);
-  document.documentElement.style.setProperty('--priceColor', colors[0] || DEFAULT_COLORS[0]);
-  document.documentElement.style.setProperty('--hoverPriceColor', colors[1] || DEFAULT_COLORS[1]);
-  document.documentElement.style.setProperty('--priceBgColor', colors[2] || DEFAULT_COLORS[2]);
+  applyColors(getFromStorage(STORAGE_KEYS.colors, DEFAULT_COLORS));
 }
 
 function createSettingsButton() {
@@ -74,17 +71,17 @@ function mountSettingsPanel() {
 function detectPageAndInit() {
   const href = location.href;
 
-  if (href.match(/store\.steampowered\.com\/app\//)) {
+  if (href.includes('/app/')) {
     initApp();
-  } else if (href.match(/store\.steampowered\.com\/bundle\//)) {
+  } else if (href.includes('/bundle/')) {
     initBundle();
-  } else if (href.match(/store\.steampowered\.com\/cart/)) {
+  } else if (href.includes('/cart')) {
     initCart();
-  } else if (href.match(/store\.steampowered\.com\/recommended\/morelike\//)) {
+  } else if (href.includes('/recommended/morelike/')) {
     initRecommended();
-  } else if (href.match(/store\.steampowered\.com\/search\//)) {
+  } else if (href.includes('/search/')) {
     initSearch();
-  } else if (href.match(/store\.steampowered\.com\/wishlist\//)) {
+  } else if (href.includes('/wishlist/')) {
     initWishlist();
   }
 }
