@@ -17,8 +17,3 @@ export type PriceType = 'official' | 'keyshop';
 
 export type Subpage = 'app' | 'wishlist' | 'bundle' | 'cart' | 'search' | 'recommended';
 
-export interface RateLimitHeaders {
-  limit: string | null;
-  remaining: string | null;
-  reset: string | null;
-}

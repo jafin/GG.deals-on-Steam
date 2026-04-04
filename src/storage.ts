@@ -1,5 +1,5 @@
 export function getFromStorage<T>(key: string, defaultValue: T): T {
-  const val = GM_getValue<T>(key, undefined as any);
+  const val = GM_getValue<T | undefined>(key);
   if (val === undefined) {
     GM_setValue(key, defaultValue);
     return defaultValue;
