@@ -5,9 +5,9 @@ import type { AppMap, Subpage } from '../types';
 import { waitForElm, getLowestPrice, clickCarouselButtons, setSimilarGamePrice } from '../utils';
 
 function setDLCPrice(apps: AppMap) {
-  document.querySelectorAll<HTMLAnchorElement>('.game_area_dlc_row').forEach(async (e) => {
+  for (const e of document.querySelectorAll<HTMLAnchorElement>('.game_area_dlc_row')) {
     const id = e.href?.match(/\/(app)\/(\d+)/)?.[2];
-    if (!id) return;
+    if (!id) continue;
     const app = apps[id];
     const dlcPrice = e.querySelector<HTMLElement>('.game_area_dlc_price');
     if (dlcPrice) dlcPrice.style.marginRight = '80px';
@@ -21,7 +21,7 @@ function setDLCPrice(apps: AppMap) {
       app?.prices?.currency ?? ''
     );
     e.prepend(priceBlock);
-  });
+  }
 }
 
 function setPriceHistory(apps: AppMap) {

@@ -5,19 +5,19 @@ import type { AppMap, Subpage } from '../types';
 import { checkPrice } from '../utils';
 
 function setSearchGamePrice(apps: AppMap) {
-  document.querySelectorAll<HTMLAnchorElement>('a[data-ds-appid]').forEach(async (e) => {
-    if (e.querySelector('.ggdeals_search_price')) return;
+  for (const e of document.querySelectorAll<HTMLAnchorElement>('a[data-ds-appid]')) {
+    if (e.querySelector('.ggdeals_search_price')) continue;
 
     e.classList.add('ggdeals_used_price');
     const priceText = e.querySelector('.discount_final_price');
-    if (!priceText) return;
+    if (!priceText) continue;
 
     const id = e.href?.match(/\/(app)\/(\d+)/)?.[2];
-    if (!id) return;
+    if (!id) continue;
     const app = apps[id];
 
     const price = checkPrice(app);
-    if (!price) return;
+    if (!price) continue;
 
     const priceBlock = document.createElement('a');
     priceBlock.href = app?.url || '#';
@@ -25,7 +25,7 @@ function setSearchGamePrice(apps: AppMap) {
     priceBlock.innerText = price;
 
     e.querySelector('.discount_final_price')?.before(priceBlock);
-  });
+  }
 }
 
 let refreshTimer: ReturnType<typeof setTimeout>;

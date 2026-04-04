@@ -5,18 +5,18 @@ import type { AppMap, Subpage } from '../types';
 import { waitForElm, checkPrice } from '../utils';
 
 function setWishlistGamePrice(apps: AppMap) {
-  document.querySelectorAll<HTMLElement>('div[data-index]').forEach(async (e) => {
+  for (const e of document.querySelectorAll<HTMLElement>('div[data-index]')) {
     const button = e.querySelector('[class*="Focusable"] span');
-    if (!button || e.querySelector('.ggdeals_wishlist_price')) return;
+    if (!button || e.querySelector('.ggdeals_wishlist_price')) continue;
 
     const id = e.querySelector<HTMLAnchorElement>('a[href*="store.steampowered.com/app/"]')?.href?.match(
       /\/(app)\/(\d+)/
     )?.[2];
-    if (!id) return;
+    if (!id) continue;
     const app = apps[id];
 
     const price = checkPrice(app);
-    if (!price) return;
+    if (!price) continue;
 
     const priceBlock = document.createElement('a');
     priceBlock.href = app?.url || '#';
@@ -25,7 +25,7 @@ function setWishlistGamePrice(apps: AppMap) {
 
     button.parentElement?.after(priceBlock);
     button.parentElement?.parentElement?.parentElement?.classList.add('ggdeals_wishlist_priceBox');
-  });
+  }
 }
 
 let refreshTimer: ReturnType<typeof setTimeout>;

@@ -4,7 +4,7 @@ import { getFromStorage } from '../storage';
 import type { AppMap, Subpage } from '../types';
 import { waitForElm, checkPrice } from '../utils';
 
-async function setMainRecommendedGamePrice(apps: AppMap) {
+function setMainRecommendedGamePrice(apps: AppMap) {
   const id = window.location.href.match(/\/(app)\/(\d+)/)?.[2];
   if (!id) return;
   const app = apps[id];
@@ -21,16 +21,16 @@ async function setMainRecommendedGamePrice(apps: AppMap) {
 }
 
 function setRecommendedGamePrice(apps: AppMap) {
-  document.querySelectorAll('.recommendation_area_ctn .similar_grid_item').forEach(async (e) => {
-    if (['freegames3', 'demogames3'].includes((e.parentNode as HTMLElement)?.id)) return;
+  for (const e of document.querySelectorAll('.recommendation_area_ctn .similar_grid_item')) {
+    if (['freegames3', 'demogames3'].includes((e.parentNode as HTMLElement)?.id)) continue;
     const id = e.querySelector<HTMLAnchorElement>('a[href*="store.steampowered.com/app/"]')?.href?.match(
       /\/(app)\/(\d+)/
     )?.[2];
-    if (!id) return;
+    if (!id) continue;
     const app = apps[id];
 
     const price = checkPrice(app);
-    if (!price) return;
+    if (!price) continue;
 
     const priceBlock = document.createElement('a');
     priceBlock.href = app?.url || '#';
@@ -38,7 +38,7 @@ function setRecommendedGamePrice(apps: AppMap) {
     priceBlock.innerText = price;
 
     e.append(priceBlock);
-  });
+  }
 }
 
 export async function initRecommended() {

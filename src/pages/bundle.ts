@@ -5,11 +5,11 @@ import type { AppMap, Subpage } from '../types';
 import { waitForElm, getLowestPrice, clickCarouselButtons, setSimilarGamePrice } from '../utils';
 
 function setBundleGamePrice(apps: AppMap) {
-  document.querySelectorAll('.tab_item.tablet_list_item').forEach(async (e) => {
+  for (const e of document.querySelectorAll('.tab_item.tablet_list_item')) {
     const id = e.querySelector<HTMLAnchorElement>('a[href*="store.steampowered.com/app/"]')?.href?.match(
       /\/(app)\/(\d+)/
     )?.[2];
-    if (!id) return;
+    if (!id) continue;
     const app = apps[id];
 
     const price = getLowestPrice(
@@ -17,7 +17,7 @@ function setBundleGamePrice(apps: AppMap) {
       app?.prices?.currentKeyshops ?? null,
       app?.prices?.currency ?? ''
     );
-    if (price === 'N/A') return;
+    if (price === 'N/A') continue;
 
     const priceBlock = document.createElement('a');
     priceBlock.href = app?.url || '#';
@@ -26,7 +26,7 @@ function setBundleGamePrice(apps: AppMap) {
     priceBlock.style.opacity = (e as HTMLElement).classList.contains('ds_flagged') ? '0.5' : '1';
 
     e.append(priceBlock);
-  });
+  }
 }
 
 export async function initBundle() {
