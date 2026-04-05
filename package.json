@@ -5,13 +5,18 @@
   "description": "Displays the current lowest prices from GG.deals directly on Steam store pages.",
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "author": "Jafin,Juzlus",
   "license": "ISC",
   "packageManager": "pnpm@10.18.2",
   "pnpm": {
-    "onlyBuiltDependencies": ["esbuild", "@esbuild/*"]
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "@esbuild/*"
+    ]
   },
   "dependencies": {
     "@preact/signals": "^2.9.0",
@@ -20,8 +25,10 @@
   },
   "devDependencies": {
     "@types/tampermonkey": "^5.0.5",
+    "happy-dom": "^20.8.9",
     "typescript": "^6.0.2",
     "vite": "^7.3.1",
-    "vite-plugin-monkey": "^7.1.9"
+    "vite-plugin-monkey": "^7.1.9",
+    "vitest": "^4.1.2"
   }
 }

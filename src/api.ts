@@ -1,12 +1,17 @@
-import { STORAGE_KEYS, DEFAULT_REGION } from './constants';
+import { STORAGE_KEYS, DEFAULT_REGION, STALE_MS } from './constants';
 import { getFromStorage, setToStorage, removeFromStorage } from './storage';
 import type { AppMap } from './types';
 
-function fetchURL(url: string): Promise<string | null> {
+export type FetchResult =
+  | { ok: true; body: string }
+  | { ok: false; reason: 'rate_limited' | 'invalid_key' | 'http_error' | 'network_error' };
+
+export function fetchURL(url: string): Promise<FetchResult> {
   return new Promise((resolve) => {
     GM_xmlhttpRequest({
       method: 'GET',
       url,
+      timeout: 10_000,
       onload(response) {
         const limitHeader = /x-ratelimit-limit:\s*(\S+)/i.exec(response.responseHeaders);
         const remainingHeader = /x-ratelimit-remaining:\s*(\S+)/i.exec(response.responseHeaders);
@@ -18,24 +23,25 @@ function fetchURL(url: string): Promise<string | null> {
 
         if (response.status === 429) {
           console.warn('[GG.deals on Steam] Rate limited: 1000 games/hour exceeded.');
-          resolve(null);
+          resolve({ ok: false, reason: 'rate_limited' });
         } else if (response.status === 400) {
           console.warn('[GG.deals on Steam] Invalid API key.');
-          resolve(null);
+          resolve({ ok: false, reason: 'invalid_key' });
         } else if (response.status >= 200 && response.status < 300) {
-          resolve(response.responseText);
+          resolve({ ok: true, body: response.responseText });
         } else {
-          resolve(null);
+          resolve({ ok: false, reason: 'http_error' });
         }
       },
       onerror() {
-        resolve(null);
+        resolve({ ok: false, reason: 'network_error' });
+      },
+      ontimeout() {
+        resolve({ ok: false, reason: 'network_error' });
       },
     });
   });
 }
-
-const STALE_MS = 60 * 60 * 1000; // 1 hour
 
 export async function getAppIds(): Promise<AppMap | null> {
   const cachedAt = Number(getFromStorage(STORAGE_KEYS.lastAppIdsTimestamp, 0));
@@ -73,15 +79,18 @@ export async function getAppIds(): Promise<AppMap | null> {
 
   const results = await Promise.all(
     chunks.map((chunk) =>
-      fetchURL(`https://api.gg.deals/v1/prices/by-steam-app-id/?ids=${chunk}&key=${token}&region=${region}`)
+      fetchURL(`https://api.gg.deals/v1/prices/by-steam-app-id/?ids=${chunk.join(',')}&key=${token}&region=${region}`)
     ),
   );
 
-  let data: AppMap = {};
-  for (const raw of results) {
-    if (raw) {
+  const data: AppMap = {};
+  for (const result of results) {
+    if (result.ok) {
       try {
-        data = { ...data, ...JSON.parse(raw)?.data };
+        const parsed: { data?: AppMap } = JSON.parse(result.body);
+        if (parsed.data) {
+          Object.assign(data, parsed.data);
+        }
       } catch {
         console.warn('[GG.deals on Steam] Failed to parse API response');
       }

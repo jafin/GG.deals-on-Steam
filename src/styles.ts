@@ -480,6 +480,7 @@ const SETTINGS_CSS = `
     margin-left: auto;
     opacity: 0.6;
     text-align: right;
+    max-width:550px;
 }
 
 .ggdeals-btn {

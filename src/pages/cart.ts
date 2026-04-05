@@ -1,10 +1,10 @@
 import { getAppIds } from '../api';
-import { STORAGE_KEYS, DEFAULT_SUBPAGES } from '../constants';
+import { STORAGE_KEYS, DEFAULT_SUBPAGES, DEFAULT_PRICE_TYPE } from '../constants';
 import { getFromStorage } from '../storage';
-import type { AppMap } from '../types';
+import type { AppMap, PriceType } from '../types';
 import { waitForElm, checkPrice } from '../utils';
 
-function setMainCartGamePrice(apps: AppMap) {
+function setMainCartGamePrice(apps: AppMap, priceType: PriceType[]) {
   for (const e of document.querySelectorAll<HTMLAnchorElement>(`div.Panel.Focusable div.Panel.Focusable a[href*='/app/']:not(.Focusable)`)) {
     const priceText = e.parentNode?.parentElement?.querySelector('span div');
     if (!priceText) continue;
@@ -13,7 +13,7 @@ function setMainCartGamePrice(apps: AppMap) {
     if (!id) continue;
     const app = apps[id];
 
-    const price = checkPrice(app);
+    const price = checkPrice(app, priceType);
     if (!price) continue;
 
     const priceBlock = document.createElement('a');
@@ -25,7 +25,7 @@ function setMainCartGamePrice(apps: AppMap) {
   }
 }
 
-function setRecommendationCartGamePrice(apps: AppMap) {
+function setRecommendationCartGamePrice(apps: AppMap, priceType: PriceType[]) {
   for (const e of document.querySelectorAll<HTMLAnchorElement>(`div.Panel.Focusable div.Panel.Focusable a[href*='/app/'].Focusable`)) {
     const priceText = e.parentNode?.parentElement?.parentElement?.querySelector('.StoreSalePriceWidgetContainer');
     if (!priceText) continue;
@@ -34,7 +34,7 @@ function setRecommendationCartGamePrice(apps: AppMap) {
     if (!id) continue;
     const app = apps[id];
 
-    const price = checkPrice(app);
+    const price = checkPrice(app, priceType);
     if (!price) continue;
 
     const priceBlock = document.createElement('a');
@@ -55,6 +55,7 @@ export async function initCart() {
   if (document.querySelector('.ggdeals_main_cart_price')) return;
   const apps = await getAppIds();
   if (!apps) return;
-  setMainCartGamePrice(apps);
-  setRecommendationCartGamePrice(apps);
+  const priceType = getFromStorage<PriceType[]>(STORAGE_KEYS.priceType, DEFAULT_PRICE_TYPE);
+  setMainCartGamePrice(apps, priceType);
+  setRecommendationCartGamePrice(apps, priceType);
 }

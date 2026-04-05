@@ -2,13 +2,15 @@ import { STORAGE_KEYS, DEFAULT_PRICE_TYPE } from './constants';
 import { getFromStorage } from './storage';
 import type { AppData, AppMap, PriceType } from './types';
 
-export function waitForElm(selector: string, timeout = 30000): Promise<Element | null> {
+export function waitForElm<T extends Element = Element>(
+  selector: string, timeout = 30000
+): Promise<T | null> {
   return new Promise((resolve) => {
-    const existing = document.querySelector(selector);
+    const existing = document.querySelector<T>(selector);
     if (existing) return resolve(existing);
 
     const observer = new MutationObserver(() => {
-      const el = document.querySelector(selector);
+      const el = document.querySelector<T>(selector);
       if (el) {
         clearTimeout(timer);
         observer.disconnect();
@@ -29,7 +31,7 @@ export function getLowestPrice(
   officialStorePrice: string | null,
   keyshopPrice: string | null,
   currency: string,
-  priceType: PriceType[] = getFromStorage<PriceType[]>(STORAGE_KEYS.priceType, DEFAULT_PRICE_TYPE)
+  priceType: PriceType[],
 ): string {
   let price: string | null;
   if (priceType.length === 2) {
@@ -46,30 +48,29 @@ export function getLowestPrice(
   return price == null ? 'N/A' : `${price} ${currency}`;
 }
 
-export function checkPrice(
-  app: AppData | undefined,
-  priceType: PriceType[] = getFromStorage<PriceType[]>(STORAGE_KEYS.priceType, DEFAULT_PRICE_TYPE)
-): string | null {
-  if (
-    !app?.prices?.currentRetail ||
-    (app.prices.currentRetail === '0.00' &&
-      app.prices.historicalRetail === '0.00' &&
-      !app.prices.currentKeyshops &&
-      !app.prices.historicalKeyshops)
-  ) {
-    return null;
-  }
+export function checkPrice(app: AppData | undefined, priceType: PriceType[]): string | null {
+  const isFreeToPlay =
+    app?.prices?.currentRetail === '0.00' &&
+    app?.prices?.historicalRetail === '0.00' &&
+    !app?.prices?.currentKeyshops &&
+    !app?.prices?.historicalKeyshops;
+
+  if (!app?.prices?.currentRetail || isFreeToPlay) return null;
 
   const price = getLowestPrice(app.prices.currentRetail, app.prices.currentKeyshops, app.prices.currency, priceType);
   return price === 'N/A' ? null : price;
 }
 
+const CAROUSEL_CLICK_ROUNDS = 8;
+const CAROUSEL_CLICK_DELAY_MS = 10;
+
 export async function clickCarouselButtons(buttonIndices: number[]): Promise<void> {
   const morelike = document.querySelectorAll('[class*="buttonNext"]');
-  for (let i = 0; i < 8; i++) {
-    await new Promise((resolve) => setTimeout(resolve, i * 10));
+  for (let i = 0; i < CAROUSEL_CLICK_ROUNDS; i++) {
+    await new Promise((resolve) => setTimeout(resolve, i * CAROUSEL_CLICK_DELAY_MS));
     for (const idx of buttonIndices) {
-      if (morelike.length > idx) (morelike[idx] as HTMLElement).click();
+      const btn = morelike[idx];
+      if (btn instanceof HTMLElement) btn.click();
     }
   }
 }
@@ -101,6 +102,7 @@ export function setSimilarGamePrice(apps: AppMap, { removeExtra = false } = {}):
     if (bar) priceBlock.style.opacity = window.getComputedStyle(bar).opacity;
 
     e.prepend(priceBlock);
+    // Hashed class for the extra overlay element — will need updating if Steam rebuilds their frontend
     if (removeExtra) e.querySelector('._2_KY_e11FV0ftXR2_7TMmP')?.remove();
   }
 }

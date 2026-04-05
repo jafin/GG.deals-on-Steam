@@ -1,14 +1,14 @@
 import { render } from 'preact';
 import { getAppIds } from '../api';
 import { PriceHistory } from '../components/PriceHistory';
-import { STORAGE_KEYS, DEFAULT_SUBPAGES } from '../constants';
+import { STORAGE_KEYS, DEFAULT_SUBPAGES, DEFAULT_PRICE_TYPE } from '../constants';
 import { getFromStorage } from '../storage';
-import type { AppMap } from '../types';
+import type { AppMap, PriceType } from '../types';
 import { waitForElm, getLowestPrice, clickCarouselButtons, setSimilarGamePrice } from '../utils';
 
 const APP_ID_RE = /\/app\/(\d+)/;
 
-function setDLCPrice(apps: AppMap) {
+function setDLCPrice(apps: AppMap, priceType: PriceType[]) {
   for (const e of document.querySelectorAll<HTMLAnchorElement>('.game_area_dlc_row')) {
     const id = e.href?.match(APP_ID_RE)?.[1];
     if (!id) continue;
@@ -22,7 +22,8 @@ function setDLCPrice(apps: AppMap) {
     priceBlock.innerText = getLowestPrice(
       app?.prices?.currentRetail ?? null,
       app?.prices?.currentKeyshops ?? null,
-      app?.prices?.currency ?? ''
+      app?.prices?.currency ?? '',
+      priceType
     );
     e.prepend(priceBlock);
   }
@@ -63,7 +64,8 @@ export async function initApp() {
   await clickCarouselButtons([0, 2]);
   const apps = await getAppIds();
   if (!apps) return;
-  setDLCPrice(apps);
+  const priceType = getFromStorage<PriceType[]>(STORAGE_KEYS.priceType, DEFAULT_PRICE_TYPE);
+  setDLCPrice(apps, priceType);
   setSimilarGamePrice(apps, { removeExtra: true });
   setPriceHistory(apps);
 }

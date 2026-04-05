@@ -1,10 +1,10 @@
 import { getAppIds } from '../api';
-import { STORAGE_KEYS, DEFAULT_SUBPAGES } from '../constants';
+import { STORAGE_KEYS, DEFAULT_SUBPAGES, DEFAULT_PRICE_TYPE } from '../constants';
 import { getFromStorage } from '../storage';
-import type { AppMap } from '../types';
+import type { AppMap, PriceType } from '../types';
 import { waitForElm, checkPrice } from '../utils';
 
-function setWishlistGamePrice(apps: AppMap) {
+function setWishlistGamePrice(apps: AppMap, priceType: PriceType[]) {
   for (const e of document.querySelectorAll<HTMLElement>('div[data-index]')) {
     const button = e.querySelector('[class*="Focusable"] span');
     if (!button || e.querySelector('.ggdeals_wishlist_price')) continue;
@@ -15,7 +15,7 @@ function setWishlistGamePrice(apps: AppMap) {
     if (!id) continue;
     const app = apps[id];
 
-    const price = checkPrice(app);
+    const price = checkPrice(app, priceType);
     if (!price) continue;
 
     const priceBlock = document.createElement('a');
@@ -36,7 +36,8 @@ async function refreshPrices() {
     document.querySelectorAll('.ggdeals_wishlist_price').forEach((e) => e.remove());
     const apps = await getAppIds();
     if (!apps) return;
-    setWishlistGamePrice(apps);
+    const priceType = getFromStorage<PriceType[]>(STORAGE_KEYS.priceType, DEFAULT_PRICE_TYPE);
+    setWishlistGamePrice(apps, priceType);
   }, 800);
 }
 

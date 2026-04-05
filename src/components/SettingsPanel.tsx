@@ -24,7 +24,9 @@ const REGIONS = [
   { value: 'pl', label: 'Poland (PL)' },
   { value: 'se', label: 'Sweden (SE)' },
   { value: 'us', label: 'United States (US)' },
-];
+] as const;
+
+type Region = typeof REGIONS[number]['value'];
 
 const SUBPAGES: { value: Subpage; label: string; desc: string }[] = [
   { value: 'app', label: 'App', desc: 'store.steampowered.com/app/*' },
@@ -39,26 +41,41 @@ const PRICE_TYPES: { value: PriceType; label: string; desc: string }[] = [
   {
     value: 'official',
     label: 'Official shops',
-    desc: 'Steam, Epic Games, Gog, Battle.net, Ubisoft Store, Microsoft Store, EA, Humble Store, Fanatical...',
+    desc: 'Steam, Epic, Gog, Battle.net, Ubisoft, Microsoft, EA, Humble Store, Fanatical...',
   },
   {
     value: 'keyshop',
     label: 'Keyshops',
-    desc: 'G2A, Instant Gaming, Kinguin, CDKeys.com, GAMIVO, Eneba, HRK Game, K4G.com, Difmark...',
+    desc: 'G2A, Instant Gaming, Kinguin, CDKeys, GAMIVO, Eneba, HRK, K4G.com, Difmark...',
   },
 ];
 
 const visible = signal(false);
-const apiKey = signal(getFromStorage(STORAGE_KEYS.token, ''));
+const apiKey = signal('');
 const showApiKey = signal(false);
-const region = signal(getFromStorage(STORAGE_KEYS.region, DEFAULT_REGION));
-const activeSubpages = signal(getFromStorage<Subpage[]>(STORAGE_KEYS.activeSubpages, DEFAULT_SUBPAGES));
-const priceType = signal(getFromStorage<PriceType[]>(STORAGE_KEYS.priceType, DEFAULT_PRICE_TYPE));
-const colors = signal(getFromStorage<readonly string[]>(STORAGE_KEYS.colors, DEFAULT_COLORS));
-const priceInStorage = signal(Object.keys(getFromStorage(STORAGE_KEYS.lastAppIds, {})).length);
-const rateLimitLimit = signal(getFromStorage(STORAGE_KEYS.rateLimitLimit, '100'));
-const rateLimitRemaining = signal(getFromStorage(STORAGE_KEYS.rateLimitRemaining, '0'));
-const rateLimitReset = signal(getFromStorage(STORAGE_KEYS.rateLimitReset, '0'));
+const region = signal<Region>(DEFAULT_REGION);
+const activeSubpages = signal<Subpage[]>(DEFAULT_SUBPAGES);
+const priceType = signal<PriceType[]>(DEFAULT_PRICE_TYPE);
+const colors = signal<readonly string[]>(DEFAULT_COLORS);
+const priceInStorage = signal(0);
+const rateLimitLimit = signal('100');
+const rateLimitRemaining = signal('0');
+const rateLimitReset = signal('0');
+let initialized = false;
+
+function initSignals() {
+  if (initialized) return;
+  initialized = true;
+  apiKey.value = getFromStorage(STORAGE_KEYS.token, '');
+  region.value = getFromStorage<Region>(STORAGE_KEYS.region, DEFAULT_REGION);
+  activeSubpages.value = getFromStorage<Subpage[]>(STORAGE_KEYS.activeSubpages, DEFAULT_SUBPAGES);
+  priceType.value = getFromStorage<PriceType[]>(STORAGE_KEYS.priceType, DEFAULT_PRICE_TYPE);
+  colors.value = getFromStorage<readonly string[]>(STORAGE_KEYS.colors, DEFAULT_COLORS);
+  priceInStorage.value = Object.keys(getFromStorage(STORAGE_KEYS.lastAppIds, {})).length;
+  rateLimitLimit.value = getFromStorage(STORAGE_KEYS.rateLimitLimit, '100');
+  rateLimitRemaining.value = getFromStorage(STORAGE_KEYS.rateLimitRemaining, '0');
+  rateLimitReset.value = getFromStorage(STORAGE_KEYS.rateLimitReset, '0');
+}
 
 const resetTimeDisplay = computed(() => new Date(Number(rateLimitReset.value) * 1000).toLocaleString());
 
@@ -72,6 +89,7 @@ effect(() => {
 });
 
 export function toggleSettingsPanel() {
+  initSignals();
   visible.value = !visible.value;
   if (visible.value) {
     // Refresh values when opening
@@ -87,7 +105,7 @@ function onApiKeyChange(val: string) {
   setToStorage(STORAGE_KEYS.token, val);
 }
 
-function onRegionChange(val: string) {
+function onRegionChange(val: Region) {
   region.value = val;
   setToStorage(STORAGE_KEYS.region, val);
 }
@@ -95,8 +113,8 @@ function onRegionChange(val: string) {
 function onSubpageToggle(sub: Subpage) {
   const curr = [...activeSubpages.value];
   const idx = curr.indexOf(sub);
-  if (idx >= 0) curr.splice(idx, 1);
-  else curr.push(sub);
+  if (idx >= 0 && curr.length > 1) curr.splice(idx, 1);
+  else if (idx < 0) curr.push(sub);
   activeSubpages.value = curr;
   setToStorage(STORAGE_KEYS.activeSubpages, curr);
 }
@@ -104,8 +122,8 @@ function onSubpageToggle(sub: Subpage) {
 function onPriceTypeToggle(pt: PriceType) {
   const curr = [...priceType.value];
   const idx = curr.indexOf(pt);
-  if (idx >= 0) curr.splice(idx, 1);
-  else curr.push(pt);
+  if (idx >= 0 && curr.length > 1) curr.splice(idx, 1);
+  else if (idx < 0) curr.push(pt);
   priceType.value = curr;
   setToStorage(STORAGE_KEYS.priceType, curr);
 }
@@ -149,7 +167,7 @@ export function SettingsPanel() {
               <input
                 type={showApiKey.value ? 'text' : 'password'}
                 value={apiKey.value}
-                onInput={(e) => onApiKeyChange((e.target as HTMLInputElement).value)}
+                onInput={(e) => onApiKeyChange(e.currentTarget.value)}
               />
               <small>
                 You can get your API key from{' '}
@@ -159,7 +177,7 @@ export function SettingsPanel() {
 
             <div class="optionBlock">
               <p>Region:</p>
-              <select value={region.value} onChange={(e) => onRegionChange((e.target as HTMLSelectElement).value)}>
+              <select value={region.value} onChange={(e) => onRegionChange(e.currentTarget.value as Region)}>
                 {REGIONS.map((r) => (
                   <option key={r.value} value={r.value}>
                     {r.label}
@@ -219,15 +237,15 @@ export function SettingsPanel() {
             <div class="ggdeals-colors">
               <div>
                 <p>Primary color:</p>
-                <input type="color" value={colors.value[0]} onInput={(e) => onColorChange(0, (e.target as HTMLInputElement).value)} />
+                <input type="color" value={colors.value[0]} onInput={(e) => onColorChange(0, e.currentTarget.value)} />
               </div>
               <div>
                 <p>Hover color:</p>
-                <input type="color" value={colors.value[1]} onInput={(e) => onColorChange(1, (e.target as HTMLInputElement).value)} />
+                <input type="color" value={colors.value[1]} onInput={(e) => onColorChange(1, e.currentTarget.value)} />
               </div>
               <div>
                 <p>Background color:</p>
-                <input type="color" value={colors.value[2]} onInput={(e) => onColorChange(2, (e.target as HTMLInputElement).value)} />
+                <input type="color" value={colors.value[2]} onInput={(e) => onColorChange(2, e.currentTarget.value)} />
               </div>
             </div>
             <button class="ggdeals-btn" onClick={resetColors}>Default Style</button>

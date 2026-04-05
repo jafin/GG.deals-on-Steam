@@ -21,3 +21,5 @@ export const DEFAULT_PRICE_TYPE: PriceType[] = ['official', 'keyshop'];
 export const DEFAULT_COLORS = ['#BEEE11', '#a6cc1b', '#344654'] as const;
 
 export const DEFAULT_REGION = 'us';
+
+export const STALE_MS = 60 * 60 * 1000; // 1 hour

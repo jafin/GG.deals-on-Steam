@@ -1,15 +1,15 @@
 import { getAppIds } from '../api';
-import { STORAGE_KEYS, DEFAULT_SUBPAGES } from '../constants';
+import { STORAGE_KEYS, DEFAULT_SUBPAGES, DEFAULT_PRICE_TYPE } from '../constants';
 import { getFromStorage } from '../storage';
-import type { AppMap } from '../types';
+import type { AppMap, PriceType } from '../types';
 import { waitForElm, checkPrice } from '../utils';
 
-function setMainRecommendedGamePrice(apps: AppMap) {
+function setMainRecommendedGamePrice(apps: AppMap, priceType: PriceType[]) {
   const id = window.location.href.match(/\/(app)\/(\d+)/)?.[2];
   if (!id) return;
   const app = apps[id];
 
-  const price = checkPrice(app);
+  const price = checkPrice(app, priceType);
   if (!price) return;
 
   const priceBlock = document.createElement('a');
@@ -20,7 +20,7 @@ function setMainRecommendedGamePrice(apps: AppMap) {
   document.querySelector('.highlight_description div')?.append(priceBlock);
 }
 
-function setRecommendedGamePrice(apps: AppMap) {
+function setRecommendedGamePrice(apps: AppMap, priceType: PriceType[]) {
   for (const e of document.querySelectorAll('.recommendation_area_ctn .similar_grid_item')) {
     if (['freegames3', 'demogames3'].includes((e.parentNode as HTMLElement)?.id)) continue;
     const id = e.querySelector<HTMLAnchorElement>('a[href*="store.steampowered.com/app/"]')?.href?.match(
@@ -29,7 +29,7 @@ function setRecommendedGamePrice(apps: AppMap) {
     if (!id) continue;
     const app = apps[id];
 
-    const price = checkPrice(app);
+    const price = checkPrice(app, priceType);
     if (!price) continue;
 
     const priceBlock = document.createElement('a');
@@ -50,6 +50,7 @@ export async function initRecommended() {
   if (document.querySelector('.ggdeals_recommended_price')) return;
   const apps = await getAppIds();
   if (!apps) return;
-  setMainRecommendedGamePrice(apps);
-  setRecommendedGamePrice(apps);
+  const priceType = getFromStorage<PriceType[]>(STORAGE_KEYS.priceType, DEFAULT_PRICE_TYPE);
+  setMainRecommendedGamePrice(apps, priceType);
+  setRecommendedGamePrice(apps, priceType);
 }

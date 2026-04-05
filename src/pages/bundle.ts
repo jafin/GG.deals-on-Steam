@@ -1,10 +1,10 @@
 import { getAppIds } from '../api';
-import { STORAGE_KEYS, DEFAULT_SUBPAGES } from '../constants';
+import { STORAGE_KEYS, DEFAULT_SUBPAGES, DEFAULT_PRICE_TYPE } from '../constants';
 import { getFromStorage } from '../storage';
-import type { AppMap } from '../types';
+import type { AppMap, PriceType } from '../types';
 import { waitForElm, getLowestPrice, clickCarouselButtons, setSimilarGamePrice } from '../utils';
 
-function setBundleGamePrice(apps: AppMap) {
+function setBundleGamePrice(apps: AppMap, priceType: PriceType[]) {
   for (const e of document.querySelectorAll('.tab_item.tablet_list_item')) {
     const id = e.querySelector<HTMLAnchorElement>('a[href*="store.steampowered.com/app/"]')?.href?.match(
       /\/(app)\/(\d+)/
@@ -15,7 +15,8 @@ function setBundleGamePrice(apps: AppMap) {
     const price = getLowestPrice(
       app?.prices?.currentRetail ?? null,
       app?.prices?.currentKeyshops ?? null,
-      app?.prices?.currency ?? ''
+      app?.prices?.currency ?? '',
+      priceType
     );
     if (price === 'N/A') continue;
 
@@ -39,6 +40,7 @@ export async function initBundle() {
   await clickCarouselButtons([0]);
   const apps = await getAppIds();
   if (!apps) return;
-  setBundleGamePrice(apps);
+  const priceType = getFromStorage<PriceType[]>(STORAGE_KEYS.priceType, DEFAULT_PRICE_TYPE);
+  setBundleGamePrice(apps, priceType);
   setSimilarGamePrice(apps);
 }
