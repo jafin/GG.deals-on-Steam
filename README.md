@@ -50,7 +50,6 @@ This fork converts the original Chrome/Firefox extension into a userscript and m
 - **Parallel API fetches** -- chunked requests run concurrently via `Promise.all` instead of sequentially
 - **1-hour cache staleness** -- cached prices are automatically refreshed after 1 hour, replacing the old rate-limit-based heuristic
 - **Price diff display** -- app page now shows the difference between current and historical lowest prices
-- **Settings panel built in Preact** -- uses `@preact/signals` for reactive state; settings panel is injected directly into the Steam page
 - **XSS and security fixes** -- sanitised DOM injection, added `rel="noopener"` to external links
 
 
