@@ -51,14 +51,11 @@
 This fork converts the original Chrome/Firefox extension into a userscript and modernises the codebase:
 
 - **Converted to userscript** -- no longer requires installing a browser extension; works with Tampermonkey, Greasemonkey, or Violentmonkey
-- **Rewritten in TypeScript + Preact** -- built with Vite and [vite-plugin-monkey](https://github.com/nickyam/vite-plugin-monkey), with Preact loaded from CDN
 - **Parallel API fetches** -- chunked requests run concurrently via `Promise.all` instead of sequentially
 - **1-hour cache staleness** -- cached prices are automatically refreshed after 1 hour, replacing the old rate-limit-based heuristic
 - **Price diff display** -- app page now shows the difference between current and historical lowest prices
-- **Dual-price search results** -- search page shows both official and keyshop prices side by side
 - **Settings panel built in Preact** -- uses `@preact/signals` for reactive state; settings panel is injected directly into the Steam page
 - **XSS and security fixes** -- sanitised DOM injection, added `rel="noopener"` to external links
-- **CI pipeline** -- GitHub Actions builds the userscript on every push, with git-tag-based versioning (`v1.0.0` for releases, `1.0.0-beta.N` for dev builds)
 
 
 ## 🙏 Credits
