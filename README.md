@@ -9,13 +9,9 @@
   <a href="https://github.com/jafin/GG.deals-on-Steam/stargazers/"><img alt="GitHub stars" src="https://img.shields.io/github/stars/jafin/GG.deals-on-Steam.svg?style=social"></a>
 </div>
 
-
 # About
 
 **GG.deals-on-Steam** is a userscript for [Steam](https://store.steampowered.com) that shows the **current lowest prices** of games from [GG.deals](https://gg.deals), directly on Steam pages.
-
-> [!NOTE]
-> The userscript is limited to **1000 price lookups per hour**.
 
 ## 🔍 Supported Steam pages
 - App page
